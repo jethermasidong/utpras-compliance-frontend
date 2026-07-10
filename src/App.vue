@@ -1,8 +1,25 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link>
-    <router-link to="/about">About</router-link>
-  </nav>
-  
-  <router-view />
+  <MainLayout>
+    <router-view v-slot="{ Component }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  </MainLayout>
 </template>
+
+<script setup>
+import MainLayout from './pages/MainLayout.vue';
+</script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
