@@ -1,13 +1,32 @@
-import axios from 'axios';
+import api from '../api/api.js';
 
-const BASE_URL = 'http://localhost:3000/api';
 
 export const loginUser = async (credentials) => {
     try {
-        const response = await axios.post(`${BASE_URL}/login`, credentials);
+        const response = await api.post('/login', credentials);
         return response.data;
         
     } catch (err) {
         throw err.response?.data || err.message;
     }
-}
+};
+
+
+export const viewUsers = async () => {
+    try {
+        const response = await api.get('/users');
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};
+
+
+export const addUser = async(data) => {
+    try {
+        const response = await api.post('/signup', data);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message
+    }
+};

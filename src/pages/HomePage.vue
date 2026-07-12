@@ -58,12 +58,15 @@ const handleLogin = async () => {
     console.log("Full response from server:", response);
 
     const role = response.user.role;
+    const token = response.token;
+
     localStorage.setItem("role", role);
+    localStorage.setItem("token", token);
 
     if (role === "regional") {
       router.push('./regional-dashboard');
     } else {
-      router.push('./provincial-dashboard')
+      router.push('./provincial-dashboard') 
     }
 
     console.log("Login successful:", response);
