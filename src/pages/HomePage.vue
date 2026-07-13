@@ -40,7 +40,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { loginUser } from '../api/userApi';
+import { loginUser } from '../api/userApi.js';
 
 const email = ref('');
 const password = ref('');

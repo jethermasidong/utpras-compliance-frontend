@@ -22,11 +22,21 @@ export const viewUsers = async () => {
 };
 
 
-export const addUser = async(data) => {
+export const addUser = async (data) => {
     try {
         const response = await api.post('/signup', data);
         return response.data;
     } catch (err) {
-        throw err.response?.data || err.message
+        throw err.response?.data || err.message;
+    }
+};
+
+
+export const deleteUser = async (id) => {
+    try {
+        const response = await api.delete(`/delete/${id}`);
+        return response;
+    } catch (err) {
+        throw err.message;
     }
 };
