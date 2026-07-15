@@ -14,7 +14,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      <div v-for="program in programs" :key="program.id" @click="navigateToProgram(program.program_name)"
+      <div v-for="program in programs" :key="program.id" @click="navigateToRequirements(program)"
            class="bg-white border border-gray-200 p-6 rounded-xl hover:border-blue-300 transition-colors flex flex-col">
         
         <div class="flex justify-between items-start mb-4">
@@ -90,7 +90,6 @@ onMounted(async () => {
 
 
 const addProgram = async () => {
-  console.log("Data being sent:", form.value);
   try {
     
     const response = await createProgram(form.value);
@@ -108,9 +107,20 @@ const addProgram = async () => {
 };
 
 
-const navigateToProgram = (name) => {
-  const slug = name.toLowerCase().replace(/\s+/g, '-');
-  router.push(`/${slug}-management`);
+const navigateToRequirements = (program) => {
+
+  const routeMap = {
+    'IBT': 'ibt-management',
+    'EBET': '/ebet-management',
+    'MCC': '/mcc-management'
+  }
+
+  const path = routeMap[program.program_name] || 'default-management';
+
+  router.push({
+    path: path,
+    query: { programId: program.id}
+  });
 };
 
 
