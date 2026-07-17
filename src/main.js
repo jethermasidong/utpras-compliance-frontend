@@ -11,6 +11,8 @@ import ProgramManagement from './pages/regional-office/ProgramManagement.vue'
 import IBTManagement from './pages/regional-office/IBTManagement.vue'
 import EBETManagement from './pages/regional-office/EBETManagement.vue'
 import MCCManagement from './pages/regional-office/MCCManagement.vue'
+import ApplicationPage from './pages/provincial-office/ApplicationPage.vue'
+import IBTProfile from './pages/provincial-office/IBTProfile.vue'
 
 const routes = [
   { path: '/', component: HomePage},
@@ -21,7 +23,9 @@ const routes = [
   { path: '/program-management', component: ProgramManagement, meta: { requiresAuth: true }},
   { path: '/ibt-management', component: IBTManagement, meta: { requiresAuth: true }},
   { path: '/ebet-management', component: EBETManagement, meta: { requiresAuth: true }},
-  { path: '/mcc-management', component: MCCManagement, meta: { requiresAuth: true }}
+  { path: '/mcc-management', component: MCCManagement, meta: { requiresAuth: true }},
+  { path: '/program-application', component: ApplicationPage, meta: { requiresAuth: true }},
+  { path: '/ibt-profile', component: IBTProfile, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({

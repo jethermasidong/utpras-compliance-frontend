@@ -12,7 +12,7 @@ export const createRequirements = async (data) => {
 
 export const editRequirements = async (data) => { 
     try {
-        const response = await api.put('/requirements-update', data);
+        const response = await api.put(`/requirements-update/${id}`, data);
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;

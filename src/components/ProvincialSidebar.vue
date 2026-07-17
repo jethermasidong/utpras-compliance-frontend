@@ -32,7 +32,7 @@ const router = useRouter();
 
 const menuItems = [
   { name: 'Dashboard', path: '/provincial-dashboard', icon: 'home-outline' },
-  { name: 'Application', path: '/programs', icon: 'albums-outline' },
+  { name: 'Program Application', path: '/program-application', icon: 'albums-outline' },
   { name: 'Current Applications', path: '/reports', icon: 'document-outline' },
   { name: 'Settings', path: '/settings', icon: 'settings-outline' },
 ];

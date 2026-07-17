@@ -1,31 +1,29 @@
 import api from '../api/api.js';
 
 
-export const createProgram = async (data) => {
+export const createIBTProfile = async (data) => {
     try {
-        const response = await api.post('/programs-create', data);
+        const response = await api.post('/ibt-profile/create', data);
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;
     }
 };
 
-
-export const editProgram = async (data) => {
+export const editIBTProfile = async (data) => {
     try {
-        const response = await api.put('/programs-update', data);
+        const response = await api.put(`/ibt-profile/edit/${id}`, data);
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;
     }
 };
 
-export const viewPrograms = async () => {
+export const viewIBTProfileByApplicationID = async (application_id) => {
     try {
-        const response = await api.get(`/programs`);
+        const response = await api.get(`/ibt-profile/${application_id}`);
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;
     }
 };
-

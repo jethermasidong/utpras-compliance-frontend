@@ -6,10 +6,16 @@
       </transition>
     </router-view>
   </MainLayout>
+  <ToastNotification />
 </template>
 
 <script setup>
 import MainLayout from './pages/MainLayout.vue';
+import { provide, ref } from 'vue';
+import ToastNotification from './components/ToastNotification.vue';
+
+const toasts = ref([]);
+provide('toasts', toasts);
 </script>
 
 <style>
