@@ -13,6 +13,8 @@ import EBETManagement from './pages/regional-office/EBETManagement.vue'
 import MCCManagement from './pages/regional-office/MCCManagement.vue'
 import ApplicationPage from './pages/provincial-office/ApplicationPage.vue'
 import IBTProfile from './pages/provincial-office/IBTProfile.vue'
+import CompliancePage from './pages/provincial-office/CompliancePage.vue'
+import ComplianceDashboard from './pages/provincial-office/ComplianceDashboard.vue'
 
 const routes = [
   { path: '/', component: HomePage},
@@ -25,7 +27,9 @@ const routes = [
   { path: '/ebet-management', component: EBETManagement, meta: { requiresAuth: true }},
   { path: '/mcc-management', component: MCCManagement, meta: { requiresAuth: true }},
   { path: '/program-application', component: ApplicationPage, meta: { requiresAuth: true }},
-  { path: '/ibt-profile', component: IBTProfile, meta: { requiresAuth: true }}
+  { path: '/ibt-profile', component: IBTProfile, meta: { requiresAuth: true }},
+  { path: '/compliance-dashboard', component: ComplianceDashboard, meta: { requiresAuth: true }},
+  { path: '/compliance-page', component: CompliancePage, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({
