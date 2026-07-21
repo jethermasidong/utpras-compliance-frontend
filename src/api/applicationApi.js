@@ -10,9 +10,9 @@ export const createApplication = async (data) => {
     }
 };
 
-export const editApplications = async (data) => {
+export const editApplications = async (id, data) => {
     try {
-        const response = await api.put('/applications-update', data);
+        const response = await api.put(`/applications-update/${id}`, data);
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;

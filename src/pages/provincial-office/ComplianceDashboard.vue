@@ -92,19 +92,26 @@
                     />
                 </td>
 
-                <td class="px-4 py-4">
-                    <span class="inline-block text-[10px] font-bold px-2 py-1 rounded-md uppercase bg-blue-50 text-blue-700 whitespace-nowrap">
-                    {{ app.status || 'Pending' }}
-                    </span>
+                <td class="px-4 py-4 text-sm">
+                    <select 
+                        v-model="app.status" 
+                        class="w-25 bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-bold text-gray-700"
+                    >
+                        <option disabled value="">Select status</option>
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="approved">Approved</option>
+                        <option value="completed">Completed</option>
+                    </select>
                 </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                    {{ app.created_at }}
+                    {{ formatDate(app.created_at) }}
                 </td>
                 
                 <td class="px-4 py-4 text-right whitespace-nowrap space-x-1">
                     <button 
-                    @click="saveRow(app)"
+                    @click="updateApplication(app)"
                     class="bg-green-700 font-bold text-xs text-white px-3 py-2 rounded-lg hover:bg-green-800 transition-colors"
                     >
                     Save
@@ -128,12 +135,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from '../../../composables/useToast.js';
 import { viewPrograms } from '../../api/programApi.js';
-import { viewApplicationsByUser } from '../../api/applicationApi.js';
+import { editApplications, viewApplicationsByUser } from '../../api/applicationApi.js';
 import { viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 
 const router = useRouter();
+const { showToast } = useToast();
 const programs = ref([]);
 const applications = ref([]);
 const activeProgram = ref(null);
@@ -163,6 +172,23 @@ onMounted(async () => {
     }
 });
 
+const updateApplication = async (app) => {
+    try {
+        const data = {
+            status: app.status,
+            date_issued: app.date_issued ? app.date_issued : null,
+            ctpr_number: app.ctpr_number || '',
+            ctpr_link: app.ctpr_link || '',
+        }
+
+        await editApplications(app.id, data);
+        showToast('success', 'Saved', 'Application CTPR details updated successfully.');
+        await fetchApplications();
+    } catch (error) {
+        showToast('error', 'Error', 'Could not save current data.');
+    }
+}
+
 
 
 const selectProgram = (program) => {
@@ -178,5 +204,16 @@ const goToCompliance = (id, program_id) => {
   router.push({ path: '/compliance-page', query: { applicationId: id,
     programId: program_id
    } });
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-PH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
 };
 </script>
