@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-5xl mx-auto min-h-auto">
+  <div class="p-6 md:p-10 max-w-7xl mx-auto">
     <ProvincialSidebar class="hidden md:block" />
     
     <div class="mb-10">
@@ -27,7 +27,7 @@
               :placeholder="'Enter ' + fieldLabels[key].toLowerCase()"
             />
           </div>
-        </div>
+        </div>  
       </section>
 
       <div class="flex justify-end -mb-5">
@@ -41,17 +41,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, onBeforeRouteLeave } from 'vue-router';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { createIBTProfile } from '../../api/ibtProfileApi.js';
+import { deleteApplication } from '../../api/applicationApi.js';
 import { useToast } from '../../../composables/useToast.js';
 
 const { showToast } = useToast();
-
 const route = useRoute();
 
-
 const appId = ref(route.query.applicationId);
+const isSubmitted = ref(false); 
 
 const inputFields = [
   'applicant_name', 
@@ -82,6 +82,28 @@ const form = ref({
   duration: '', program_applied: '', no_of_trainees: '', training_capacity: '', no_of_batches: ''
 });
 
+
+onBeforeRouteLeave(async (to, from, next) => {
+    if (isSubmitted.value) {
+        next();
+    } else {
+        const answer = window.confirm('You have an application in progress. If you leave, this application will be discarded. Continue?');
+        if (answer) {
+            try {
+                await deleteApplication(appId.value);
+                next();
+            } catch (err) {
+                console.error("Failed to delete application", err);
+                next();
+            }
+        } else {
+            next(false);
+        }
+    }
+});
+
+
+
 const addIBTApplication = async () => {
     console.log("Current App ID value:", appId.value);
 
@@ -97,7 +119,7 @@ const addIBTApplication = async () => {
     };
     const response = await createIBTProfile(data);
     showToast('success', 'Application Submitted', 'Your profile has been saved successfully!');
-
+    isSubmitted.value = true;
     form.value = {
         applicant_name: '',
         telephone: '',

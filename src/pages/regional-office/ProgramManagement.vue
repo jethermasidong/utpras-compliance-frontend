@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div class="p-6 md:p-10 max-w-7xl mx-auto">
     <RegionalSidebar class="hidden md:block" /> 
     
     <div class="flex justify-between items-center mb-6">
@@ -112,7 +112,8 @@ const navigateToRequirements = (program) => {
   const routeMap = {
     'IBT': 'ibt-management',
     'EBET': '/ebet-management',
-    'MCC': '/mcc-management'
+    'MCC': '/mcc-management',
+    'MTP': '/mtp-management'
   }
 
   const path = routeMap[program.program_name] || 'default-management';

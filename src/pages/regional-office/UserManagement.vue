@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div class="p-6 md:p-10 max-w-7xl mx-auto">
     <RegionalSidebar class="hidden md:block" /> 
     
 
@@ -16,11 +16,11 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-gray-50 border-b border-gray-200">
+          <tr class="bg-gray-50 border-b border-gray-200  ">
             <th class="px-6 py-4 font-semibold text-gray-700">Role</th>
             <th class="px-6 py-4 font-semibold text-gray-700">Province</th>
             <th class="px-6 py-4 font-semibold text-gray-700">Email</th>
-            <th class="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
+            <th class="px-6 py-4 font-semibold text-gray-700">Created At</th>
           </tr>
         </thead>
         <tbody>
@@ -28,12 +28,7 @@
             <td class="px-6 py-4 capitalize">{{ user.role }}</td>
             <td class="px-6 py-4 capitalize">{{ user.province }}</td>
             <td class="px-6 py-4 text-gray-600">{{ user.email }}</td>
-            <td class="px-6 py-4 text-right space-x-2">
-              <button class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-              <button 
-                @click="delUser(user.id)"
-                class="text-red-600 hover:text-red-800 font-medium">Delete</button>
-            </td>
+            <td class="px-6 py-4 text-gray-600">{{ formatDate(user.created_at) }}</td>
           </tr>
         </tbody>
       </table>
@@ -46,14 +41,21 @@
         <form @submit.prevent="createUser" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700">Role</label>
-            <select v-model="form.role" required class="w-full mt-1 p-2 border rounded-md">
+            <select v-model="form.role" required :class="[
+                'w-full mt-1 p-2 border rounded-md outline-none transition-all',
+                !form.role ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
+              ]">
               <option value="regional">Regional</option>
               <option value="provincial">Provincial</option>
             </select>
+            <p v-if="!form.role" class="text-[12px] text-red-500 mt-1">This field is required</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700">Province</label>
-           <select v-model="form.province" required class="w-full mt-1 p-2 border rounded-md">
+           <select v-model="form.province" required :class="[
+                'w-full mt-1 p-2 border rounded-md outline-none transition-all',
+                !form.province ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
+              ]">
               <option value="abra">Abra</option>
               <option value="apayao">Apayao</option>
               <option value="benguet">Benguet</option>
@@ -61,14 +63,37 @@
               <option value="kalinga">Kalinga</option>
               <option value="mountain province">Mountain Province</option>
             </select>
+            <p v-if="!form.province" class="text-[12px] text-red-500 mt-1">This field is required</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input v-model="form.email" type="email" placeholder="Enter your email" required class="w-full mt-1 p-2 border rounded-md" />
+            <input 
+              v-model="form.email" 
+              type="email" 
+              placeholder="Enter your email" 
+              required 
+              maxLength="50"
+              :class="[
+                'w-full mt-1 p-2 border rounded-md outline-none transition-all',
+                !form.email ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
+              ]" 
+            />
+            <p v-if="!form.email" class="text-[12px] text-red-500 mt-1">This field is required</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700">Password</label>
-            <input v-model="form.password" type="password" placeholder="Enter your password" required class="w-full mt-1 p-2 border rounded-md" />
+            <input 
+              v-model="form.password" 
+              type="password" 
+              placeholder="Enter your password" 
+              required 
+              maxLength="50"
+              :class="[
+                'w-full mt-1 p-2 border rounded-md outline-none transition-all',
+                !form.password ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
+              ]" 
+            />
+            <p v-if="!form.password" class="text-[12px] text-red-500 mt-1">This field is required</p>
           </div>
           <div class="flex justify-end space-x-3 mt-6">
             <button type="button" @click="showModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
@@ -82,12 +107,25 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useToast } from '../../../composables/useToast.js';
 import RegionalSidebar from '../../components/RegionalSidebar.vue'; 
-import { addUser, deleteUser, viewUsers } from '../../api/userApi.js';
+import { addUser, viewUsers } from '../../api/userApi.js';
+
 
 const showModal = ref(false);
 const users = ref([]);
+const { showToast } = useToast();
 
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-PH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+};
 
 const form = ref({
   role: '',
@@ -110,24 +148,11 @@ const createUser = async () => {
 
     form.value = { role: '', province: '', email: '', password: '' };
     showModal.value = false;
-
+    showToast('success', 'User Created', 'User have been saved.');
   } catch (error) {
-    console.error('Failed to save user', error);
-    alert("Error saving user:" + (error.message || "Unknown Error"));
+    showToast('error', 'Error', 'Failed to save changes.');
+    console.error(err);
   }
 };
-
-const delUser = async (id) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
-    try {
-        await deleteUser(id);
-
-        users.value = await viewUsers();
-    } catch (error) {
-        console.error('Failed to delete user', error);
-        alert("Error deleting user:" + (error.message || "Unknown Error"));
-    }
-}
-
 
 </script>

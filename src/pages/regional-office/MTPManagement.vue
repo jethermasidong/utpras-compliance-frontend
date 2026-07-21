@@ -4,7 +4,7 @@
       
 
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">EBET Program Requirements</h1>
+        <h1 class="text-2xl font-bold text-gray-800">MTP Program Requirements</h1>
         <button 
           @click="showModal = true"
           class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"

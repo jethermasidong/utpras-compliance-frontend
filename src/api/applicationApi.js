@@ -26,4 +26,13 @@ export const viewApplicationsByUser = async () => {
     } catch (err) {
         throw err.response?.data || err.message;
     }
-}
+};
+
+export const deleteApplication = async (id) => {
+    try {
+        const response = await api.delete(`/applications-delete/${id}`);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};

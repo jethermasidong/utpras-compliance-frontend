@@ -10,7 +10,7 @@ export const createRequirements = async (data) => {
     }
 };
 
-export const editRequirements = async (data) => { 
+export const editRequirements = async (id, data) => { 
     try {
         const response = await api.put(`/requirements-update/${id}`, data);
         return response.data;

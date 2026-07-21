@@ -1,6 +1,7 @@
 <template>
-  <div class="p-4 md:p-8 max-w-6xl mx-auto min-h-auto">
-    <ProvincialSidebar class="hidden md:block" /> 
+  <div class="p-6 md:p-10 max-w-7xl mx-auto">
+    <ProvincialSidebar class="hidden md:block w-64 shrink-0" /> 
+    <main class="flex-1 px-4">
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Compliance Dashboard</h1>
       <p class="text-gray-500 text-sm">Edit your profile and manage requirements below</p>
@@ -46,35 +47,48 @@
         </div>
         
         <div class="overflow-x-auto">
-          <table class="w-full text-left">
+          <table class="w-full text-left border-collapse">
             <thead>
               <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-400">
-                <th class="px-6 py-4">Requirement Name</th>
+                <th class="px-6 py-4">Requirement Title</th>
+                <th class="px-6 py-4">Description</th>
+                <th class="px-6 py-4">Documents</th>
+                <th class="px-6 py-4">Date Uploaded</th>
                 <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4 text-right">Action</th>
+                <th class="px-6 py-4">Remarks</th>
+                <th class="px-6 py-4">Date Reviewed</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-              <tr v-for="req in requirements" :key="req.id">
-                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.name }}</td>
+              <tr v-for="req in documents" :key="req.requirement_id">
+                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.title }}</td>
+                <td class="px-6 py-4 text-xs font-medium text-gray-700">{{ req.description }}</td>
+                <td class="px-6 py-4">
+                  <button class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors">
+                    {{ req.file_url ? 'View' : 'Upload'}}
+                  </button>
+                </td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-700">
+                    <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
+                        class="text-[9px] font-bold px-2 py-1 rounded-md uppercase">
+                        {{ req.uploaded_at || 'not yet uploaded' }}
+                    </span>
+                </td>
                 <td class="px-6 py-4">
                   <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
                         class="text-[10px] font-bold px-2 py-1 rounded-md uppercase">
-                    {{ req.status }}
+                    {{ req.status || 'pending' }}
                   </span>
                 </td>
-                <td class="px-6 py-4 text-right">
-                  <button class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors">
-                    Upload
-                  </button>
-                </td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.remarks }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
       
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -83,6 +97,7 @@ import { ref, computed, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
 import { viewApplicationsByUser } from '../../api/applicationApi.js';
+import { viewDocuments } from '../../api/documentApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 
@@ -92,6 +107,8 @@ const originalProfile = ref({});
 
 
 const appId = route.query.applicationId;
+const progId = route.query.programId;
+
 const profile = ref({
   applicant_name: '',
   address: '',
@@ -114,21 +131,21 @@ const fieldLabels = {
   no_of_batches: 'No of Batches per year',
 };
 
-const requirements = ref([
-  { id: 1, name: 'Business Permit', status: 'compliant' },
-  { id: 2, name: 'Fire Safety Certificate', status: 'pending' }
-]);
+const documents = ref([]);
 
-const pendingCount = computed(() => requirements.value.filter(r => r.status === 'pending').length);
+const pendingCount = computed(() => documents.value.filter(r => !r.status || r.status === 'pending').length);
 
 onMounted(async () => {
   if (appId) {
     const data = await viewIBTProfileByApplicationID(appId);
     const loadedData = Array.isArray(data) ? data[0] : data;
     if (loadedData) {
-      profile.value = { ...loadedData };;
-
+      profile.value = { ...loadedData };
       originalProfile.value = JSON.parse(JSON.stringify(loadedData));
+    }
+    console.log("Check the description here:", documents.value);
+    if (progId) {
+        documents.value = await viewDocuments(appId, progId);
     }
   }
 });

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div class="fixed top-5 right-5 z-9999 flex flex-col gap-3 pointer-events-none">
+    <div class="fixed top-25 right-5 z-9999 flex flex-col gap-3 pointer-events-none">
       <transition-group name="fade">
         <div 
           v-for="toast in toasts" :key="toast.id"

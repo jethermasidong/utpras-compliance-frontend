@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div class="p-6 md:p-10 max-w-7xl mx-auto">
     <RegionalSidebar class="hidden md:block" /> 
 
     <main class="flex-1 p-8">

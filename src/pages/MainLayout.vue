@@ -3,7 +3,7 @@
     
     <Header />
     
-    <main class="grow max-w-6xl mx-auto w-full p-6">
+    <main class="grow w-full pr-30 pl-80 py-10">
       <slot /> 
     </main>
     

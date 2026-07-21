@@ -15,6 +15,7 @@ import ApplicationPage from './pages/provincial-office/ApplicationPage.vue'
 import IBTProfile from './pages/provincial-office/IBTProfile.vue'
 import CompliancePage from './pages/provincial-office/CompliancePage.vue'
 import ComplianceDashboard from './pages/provincial-office/ComplianceDashboard.vue'
+import MTPManagement from './pages/regional-office/MTPManagement.vue'
 
 const routes = [
   { path: '/', component: HomePage},
@@ -26,6 +27,7 @@ const routes = [
   { path: '/ibt-management', component: IBTManagement, meta: { requiresAuth: true }},
   { path: '/ebet-management', component: EBETManagement, meta: { requiresAuth: true }},
   { path: '/mcc-management', component: MCCManagement, meta: { requiresAuth: true }},
+  { path: '/mtp-management', component: MTPManagement, meta: {requiresAuth: true }},
   { path: '/program-application', component: ApplicationPage, meta: { requiresAuth: true }},
   { path: '/ibt-profile', component: IBTProfile, meta: { requiresAuth: true }},
   { path: '/compliance-dashboard', component: ComplianceDashboard, meta: { requiresAuth: true }},
