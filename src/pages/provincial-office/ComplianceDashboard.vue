@@ -179,7 +179,7 @@ const updateApplication = async (app) => {
             date_issued: app.date_issued ? app.date_issued : null,
             ctpr_number: app.ctpr_number || '',
             ctpr_link: app.ctpr_link || '',
-        }
+        };
 
         await editApplications(app.id, data);
         showToast('success', 'Saved', 'Application CTPR details updated successfully.');

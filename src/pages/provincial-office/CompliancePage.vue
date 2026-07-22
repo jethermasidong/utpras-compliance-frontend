@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 md:p-10 max-w-7xl mx-auto">
+  <div class="p-6 md:p-10 max-w-450 mx-auto">
     <ProvincialSidebar class="hidden md:block w-64 shrink-0" /> 
     <main class="flex-1 px-4">
     <div class="mb-6">
@@ -50,21 +50,22 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-400">
-                <th class="px-6 py-4">Requirement Title</th>
-                <th class="px-6 py-4">Description</th>
-                <th class="px-6 py-4">Documents</th>
-                <th class="px-6 py-4">Date Uploaded</th>
-                <th class="px-6 py-4">PO Compliance</th>
-                <th class="px-6 py-4">RO Compliance</th>
-                <th class="px-6 py-4">Remarks</th>
-                <th class="px-6 py-4">Date Reviewed</th>
+                <th class="px-3 py-4">Requirement Title</th>
+                <th class="px-3 py-4">Description</th>
+                <th class="px-3 py-4">Documents</th>
+                <th class="px-3 py-4">Date Uploaded</th>
+                <th class="px-3 py-4">PO Compliance</th>
+                <th class="px-3 py-4">RO Compliance</th>
+                <th class="px-3 py-4">Remarks</th>
+                <th class="px-3 py-4">Date Reviewed</th>
+                <th class="px-3 py-4">Action</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
               <tr v-for="req in documents" :key="req.requirement_id">
-                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.title }}</td>
-                <td class="px-6 py-4 text-xs font-medium text-gray-700">{{ req.description }}</td>
-                <td class="px-6 py-4">
+                <td class="px-3 py-4 text-sm font-medium text-gray-700">{{ req.title }}</td>
+                <td class="px-3 py-4 text-xs font-medium text-gray-700">{{ req.description }}</td>
+                <td class="px-3 py-4">
                   <input 
                     type="file" 
                     accept=".pdf,.jpg,.png,.docx"
@@ -72,17 +73,28 @@
                     @change="(e) => handleFileSelected(e, req.requirement_id)" 
                     class="hidden" 
                   />
+                  <div class="flex items-center gap-2">
+                    <button 
+                      v-if="req.file_url && req.file_url.trim() !== ''"
+                      @click="openPreview(req)"
+                      class="text-green-700 font-bold text-xs bg-green-50 px-3 py-2 rounded-lg hover:bg-green-100 transition-colors"
+                    >
+                      View
+                    </button>
 
-                  <button 
-                    @click="triggerFileInput(req.requirement_id)"
-                    class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
-                    {{ req.file_url ? 'View / Change' : 'Upload' }}
-                  </button>
+                    <button 
+                      @click="triggerFileInput(req.requirement_id)"
+                      class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      {{ req.file_url ? 'Change' : 'Upload' }}
+                    </button>
+                  </div>
                 </td>
-                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ formatDate(req.uploaded_at) || 'Doesnt have file yet' }}</td>
-                <td class="px-4 py-4 text-sm">
+                <td class="px-3 py-4 text-center"><span class="text-[12px] rounded-md uppercase px-2 py-1 bg-gray-50 text-black">{{ formatDate(req.uploaded_at)}}</span></td>
+                <td class="px-3 py-4 text-sm">
                     <select 
+                        placeholder="Upload Document First"
+                        v-if="req.file_url && req.file_url.trim() !== ''"
                         v-model="req.po_compliance" 
                         class="w-25 bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-bold text-gray-700"
                     >
@@ -91,15 +103,30 @@
                         <option value="active">Yes</option>
                         <option value="approved">No</option>
                     </select>
+                    <span v-else class="text-[10px] flex text-center font-bold px-2 py-1 rounded-md uppercase text-black bg-gray-50">
+                        Upload document first
+                    </span>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-3 py-4">
                   <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
                         class="text-[10px] font-bold px-2 py-1 rounded-md uppercase">
                     {{ req.status || 'pending' }}
                   </span>
                 </td>
-                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.remarks }}</td>
-                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.reviewed_at }}</td>
+                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-md uppercase bg-gray-50 text-black">{{ req.remarks || '...' }}</span></td>
+                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-md uppercase bg-gray-50 text-black">{{ req.reviewed_at || '...'}}</span></td>
+                <td class="px-3 py-4 text-center whitespace-nowrap space-x-1">
+                  <button 
+                    v-if="req.file_url && req.file_url.trim() !== ''"
+                    @click="handlePOComplianceUpdate(req)"
+                    class="bg-blue-50 text-blue-800 font-bold text-xs px-5 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    Save Compliance
+                  </button>
+                  <span v-else class="text-[10px] font-bold px-2 py-1 rounded-md uppercase text-black bg-gray-50">
+                    Upload document first
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -108,6 +135,61 @@
       
       </div>
     </main>
+      <div v-if="previewModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh] overflow-hidden">
+
+          <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800 text-sm uppercase tracking-wider">Preview: {{ activePreviewTitle }}</h3>
+            <button @click="closePreview" class="text-gray-400 hover:text-gray-600 font-bold text-lg px-2">
+              &times;
+            </button>
+          </div>
+          <div class="p-6 flex-1 bg-gray-50 flex items-center justify-center overflow-auto min-h-[400px]">
+            
+            <img 
+              v-if="activePreviewUrl.match(/\.(jpg|jpeg|png|webp)(\?.*)?$/i)" 
+              :src="activePreviewUrl" 
+              class="max-h-[70vh] object-contain rounded-lg shadow-sm" 
+              alt="Document Preview"
+            />
+
+            <iframe 
+              v-else-if="activePreviewUrl.match(/\.pdf(\?.*)?$/i)" 
+              :src="activePreviewUrl" 
+              class="w-full h-[70vh] rounded-lg border border-gray-200 bg-white"
+            ></iframe>
+
+            <div v-else class="text-center py-12">
+              <p class="text-sm text-gray-600 mb-4">Direct preview is not available for this file format (e.g., DOCX).</p>
+              <a 
+                :href="activePreviewUrl" 
+                target="_blank" 
+                class="bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              >
+                Download File to View
+              </a>
+            </div>
+
+          </div>
+
+          <div class="px-6 py-3 border-t border-gray-100 flex justify-end gap-2 bg-white">
+            <a 
+              :href="activePreviewUrl" 
+              target="_blank"
+              class="bg-gray-100 text-gray-700 text-xs font-bold px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Open in New Tab
+            </a>
+            <button 
+              @click="closePreview"
+              class="bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+
+        </div>
+      </div>
   </div>
 </template>
 
@@ -116,7 +198,7 @@ import { ref, computed, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
 import { viewApplicationsByUser } from '../../api/applicationApi.js';
-import { viewDocuments, createDocument, editDocumentFileUpload } from '../../api/documentApi.js';
+import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCompliance } from '../../api/documentApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 
@@ -233,6 +315,20 @@ const handleFileSelected = async (event, requirementId) => {
   }
 };
 
+const handlePOComplianceUpdate = async (req) => {
+  try {
+    const data = {
+      po_compliance: req.po_compliance,
+    };
+
+    await editDocumentPOCompliance(appId, req.requirement_id, data);
+    showToast('success', 'Saved', 'PO Compliance Saved');
+    documents.value = await viewDocuments(appId, progId);
+  } catch (error) {
+    showToast('error', 'Error', 'Could not save current data.');
+  }
+}
+
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
@@ -243,6 +339,31 @@ const formatDate = (dateString) => {
     month: 'long',
     day: 'numeric'
   }).format(date);
+};
+
+const getFileUrl = (url) => {
+  if (!url) return '#';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
+const previewModalOpen = ref(false);
+const activePreviewUrl = ref('');
+const activePreviewTitle = ref('');
+
+const openPreview = (req) => {
+  if (!req.file_url) return;
+  activePreviewUrl.value = getFileUrl(req.file_url);
+  activePreviewTitle.value = req.title;
+  previewModalOpen.value = true;
+};
+
+const closePreview = () => {
+  previewModalOpen.value = false;
+  activePreviewUrl.value = '';
+  activePreviewTitle.value = '';
 };
 
 </script>

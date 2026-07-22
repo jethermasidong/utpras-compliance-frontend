@@ -26,7 +26,16 @@ export const editDocumentFileUpload = async (application_id, requirement_id, dat
     } catch (err) {
         throw err.response?.data || err.message;
     }
-}
+};
+
+export const editDocumentPOCompliance = async (application_id, requirement_id, data) => {
+    try {
+        const response = await api.put(`/document/update/${application_id}/${requirement_id}`, data);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};
 
 
 
