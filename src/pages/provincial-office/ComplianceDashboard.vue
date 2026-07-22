@@ -68,27 +68,27 @@
                 
                 <td class="px-4 py-4 text-sm">
                     <input 
-                    type="date" 
-                    v-model="app.date_issued" 
-                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        type="date" 
+                        v-model="app.date_issued" 
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </td>
 
                 <td class="px-4 py-4 text-sm">
                     <input 
-                    type="text" 
-                    v-model="app.ctpr_number" 
-                    placeholder="Enter CTPR #"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        type="text" 
+                        v-model="app.ctpr_number" 
+                        placeholder="Enter CTPR #"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </td>
 
                 <td class="px-4 py-4 text-sm">
                     <input 
-                    type="text" 
-                    v-model="app.ctpr_link" 
-                    placeholder="Enter Link"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        type="text" 
+                        v-model="app.ctpr_link" 
+                        placeholder="Enter Link"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </td>
 

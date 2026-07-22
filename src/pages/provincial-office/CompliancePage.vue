@@ -3,7 +3,7 @@
     <ProvincialSidebar class="hidden md:block w-64 shrink-0" /> 
     <main class="flex-1 px-4">
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Compliance Dashboard</h1>
+      <h1 class="text-2xl font-bold text-gray-900">Application - {{ profile.program_applied }}</h1>
       <p class="text-gray-500 text-sm">Edit your profile and manage requirements below</p>
     </div>
 
@@ -54,7 +54,8 @@
                 <th class="px-6 py-4">Description</th>
                 <th class="px-6 py-4">Documents</th>
                 <th class="px-6 py-4">Date Uploaded</th>
-                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4">PO Compliance</th>
+                <th class="px-6 py-4">RO Compliance</th>
                 <th class="px-6 py-4">Remarks</th>
                 <th class="px-6 py-4">Date Reviewed</th>
               </tr>
@@ -64,15 +65,32 @@
                 <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.title }}</td>
                 <td class="px-6 py-4 text-xs font-medium text-gray-700">{{ req.description }}</td>
                 <td class="px-6 py-4">
-                  <button class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors">
-                    {{ req.file_url ? 'View' : 'Upload'}}
+                  <input 
+                    type="file" 
+                    accept=".pdf,.jpg,.png,.docx"
+                    :ref="el => fileInputs[req.requirement_id] = el" 
+                    @change="(e) => handleFileSelected(e, req.requirement_id)" 
+                    class="hidden" 
+                  />
+
+                  <button 
+                    @click="triggerFileInput(req.requirement_id)"
+                    class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    {{ req.file_url ? 'View / Change' : 'Upload' }}
                   </button>
                 </td>
-                <td class="px-6 py-4 text-sm font-medium text-gray-700">
-                    <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
-                        class="text-[9px] font-bold px-2 py-1 rounded-md uppercase">
-                        {{ req.uploaded_at || 'not yet uploaded' }}
-                    </span>
+                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ formatDate(req.uploaded_at) || 'Doesnt have file yet' }}</td>
+                <td class="px-4 py-4 text-sm">
+                    <select 
+                        v-model="req.po_compliance" 
+                        class="w-25 bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-bold text-gray-700"
+                    >
+                        <option disabled value="">Select status</option>
+                        <option value="pending">Pending</option>
+                        <option value="active">Yes</option>
+                        <option value="approved">No</option>
+                    </select>
                 </td>
                 <td class="px-6 py-4">
                   <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
@@ -81,6 +99,7 @@
                   </span>
                 </td>
                 <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.remarks }}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-700">{{ req.reviewed_at }}</td>
               </tr>
             </tbody>
           </table>
@@ -97,13 +116,23 @@ import { ref, computed, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
 import { viewApplicationsByUser } from '../../api/applicationApi.js';
-import { viewDocuments } from '../../api/documentApi.js';
+import { viewDocuments, createDocument, editDocumentFileUpload } from '../../api/documentApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 
 const route = useRoute();
 const { showToast } = useToast();
 const originalProfile = ref({});
+const fileInputs = ref({});
+
+const activeRequirementId = ref(null);
+
+const triggerFileInput = (requirementId) => {
+  activeRequirementId.value = requirementId;
+  if (fileInputs.value[requirementId]) {
+    fileInputs.value[requirementId].click();
+  }
+};
 
 
 const appId = route.query.applicationId;
@@ -170,4 +199,50 @@ const saveProfile = async () => {
     console.error(err);
   }
 };
+
+const handleFileSelected = async (event, requirementId) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  activeRequirementId.value = requirementId;
+  const currentReq = documents.value.find(r => r.requirement_id === requirementId);
+  const hasExistingFile = currentReq && currentReq.file_url && currentReq.file_url.trim() !== '';
+
+  const data = new FormData();
+  data.append('file', file);
+  data.append('version', hasExistingFile ? (Number(currentReq.version || 1) + 1) : 1);
+  data.append('po_compliance', 'pending');
+
+  try {
+    showToast('info', 'Uploading....', 'Uploading document to cloud storage...');
+
+    if (hasExistingFile) {
+      await editDocumentFileUpload(appId, requirementId, data);
+    } else {
+      await createDocument(appId, requirementId, data);
+    }
+    showToast('success', 'Uploaded', 'Document uploaded successfully!');
+
+    documents.value = await viewDocuments(appId, progId);
+  } catch (error) {
+    console.error("Uploaded failed:", error);
+    showToast('error', 'Error Uploading', 'Failed to upload document.');
+  } finally {
+    activeRequirementId.value = null;
+    event.target.value = '';
+  }
+};
+
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-PH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+};
+
 </script>
