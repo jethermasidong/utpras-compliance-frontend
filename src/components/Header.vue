@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-blue-900 text-white p-4  shadow-md">
+  <header class="fixed top-0 left-0 right-0 z-50 bg-blue-900 text-white p-4 shadow-md">
     <nav class="max-w-6xl mx-auto flex justify-between">
       <div class="flex flex-row">
         <img class="w-10 h-10" src="/tesda-logo.png" alt="Company Logo" />

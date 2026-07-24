@@ -1,9 +1,9 @@
 <template>
-  <div class="p-6 md:p-10 max-w-7xl mx-auto">
+  <div class="p-6 md:p-10 max-w-8xl mx-auto">
     <ProvincialSidebar class="hidden md:block" /> 
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Compliance Dashboard</h1>
-      <p class="text-gray-500">Select a program to view pending applications</p>
+      <h1 class="text-2xl font-bold text-gray-900">Provincial Office Compliance Dashboard</h1>
+      <p class="text-gray-500 font-extralight">View pending applications based on programs</p>
     </div>
 
 
@@ -14,9 +14,9 @@
         v-for="program in programs" :key="program.id"
         @click="selectProgram(program)"
         :class="[
-            'px-6 py-3 font-bold rounded-xl transition-all duration-200 border-2 whitespace-nowrap',
+            'px-5 py-2 font-bold rounded-xl transition-all duration-200 border-2 whitespace-nowrap',
             activeProgram?.id === program.id 
-            ? 'bg-blue-900 text-white border-blue-900 shadow-lg shadow-blue-200' 
+            ? 'bg-blue-900 text-white border-blue-900 shadow-md shadow-blue-200' 
             : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
         ]"
         >
@@ -24,7 +24,7 @@
         </button>
     </div>
     <router-link to="/program-application" class="shrink-0 ml-4">
-        <button class="px-6 py-3 font-bold rounded-xl transition-all duration-200 border-2 bg-blue-900 text-white border-blue-900 shadow-lg shadow-blue-200">
+        <button class="px-5 py-2 font-bold rounded-xl transition-all duration-200 border-2 hover:border-blue-300 bg-white text-black border-gray-200 shadow-md shadow-blue-200">
         Create Application
         </button>
     </router-link>
@@ -34,10 +34,10 @@
 
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <h2 class="text-sm font-bold text-black uppercase tracking-widest">
             {{ activeProgram ? activeProgram.program_name : 'Select a program' }} Applications
             </h2>
-            <span class="text-[10px] font-bold text-gray-400 uppercase">
+            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">
             {{ filteredApplications.length }} Records Found
             </span>
         </div>
@@ -45,15 +45,15 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
             <thead>
-                <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-400">
-                <th class="px-4 py-4 min-w-37.5">Applicant Name</th>
-                <th class="px-4 py-4 min-w-32.5">Program Applied</th>
-                <th class="px-4 py-4 min-w-37.5">Date Issued</th>
-                <th class="px-4 py-4 min-w-32.5">CTPR Number</th>
-                <th class="px-4 py-4 min-w-40">CTPR Link</th>
-                <th class="px-4 py-4 min-w-25">Status</th>
-                <th class="px-4 py-4 min-w-32.5">Date Created</th>
-                <th class="px-4 py-4 text-right min-w-35">Action</th>
+                <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-900">
+                    <th class="px-4 py-4 min-w-37.5">Applicant Name</th>
+                    <th class="px-4 py-4 min-w-32.5">Program Applied</th>
+                    <th class="px-4 py-4 min-w-37.5">Date Issued</th>
+                    <th class="px-4 py-4 min-w-32.5">CTPR Number</th>
+                    <th class="px-4 py-4 min-w-40">CTPR Link</th>
+                    <th class="px-4 py-4 min-w-25">Status</th>
+                    <th class="px-4 py-4 min-w-32.5">Date Created</th>
+                    <th class="px-4 py-4 text-right min-w-35">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50 align-middle">
@@ -62,7 +62,7 @@
                     {{ app.applicant_name }}
                 </td>
                 
-                <td class="px-4 py-4 text-sm text-gray-600">
+                <td class="px-3 py-4 text-sm text-gray-600">
                     {{ app.program_applied }}
                 </td>
                 
@@ -70,7 +70,7 @@
                     <input 
                         type="date" 
                         v-model="app.date_issued" 
-                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </td>
 
@@ -79,7 +79,7 @@
                         type="text" 
                         v-model="app.ctpr_number" 
                         placeholder="Enter CTPR #"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </td>
 
@@ -88,21 +88,15 @@
                         type="text" 
                         v-model="app.ctpr_link" 
                         placeholder="Enter Link"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </td>
 
-                <td class="px-4 py-4 text-sm">
-                    <select 
-                        v-model="app.status" 
-                        class="w-25 bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-bold text-gray-700"
-                    >
-                        <option disabled value="">Select status</option>
-                        <option value="pending">Pending</option>
-                        <option value="active">Active</option>
-                        <option value="approved">Approved</option>
-                        <option value="completed">Completed</option>
-                    </select>
+                <td class="px-3 py-4">
+                  <span :class="app.status === 'approved' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
+                        class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase">
+                    {{ app.status || 'pending' }}
+                  </span>
                 </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
@@ -112,13 +106,13 @@
                 <td class="px-4 py-4 text-right whitespace-nowrap space-x-1">
                     <button 
                     @click="updateApplication(app)"
-                    class="bg-green-700 font-bold text-xs text-white px-3 py-2 rounded-lg hover:bg-green-800 transition-colors"
+                    class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-2 rounded-xl transition-colors"
                     >
                     Save
                     </button>
                     <button 
                     @click="goToCompliance(app.id, app.program_id)"
-                    class="text-blue-900 font-bold text-xs bg-blue-50 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                    class="font-bold border-2 hover:border-blue-300 text-xs bg-white text-black border-gray-200 px-3 py-2 rounded-xl hover:bg-blue-100 transition-colors"
                     >
                     View
                     </button>
@@ -152,7 +146,7 @@ const fetchApplications = async () => {
         const rawApps = await viewApplicationsByUser();
         applications.value = rawApps.map(app => ({
              ...app,
-             data_issued: app.date_issued ? app.data_issued.split('T')[0] : ''
+             date_issued: app.date_issued ? app.date_issued.split('T')[0] : ''
         }));
     } catch (error) {
         console.error("Failed to load applications:", error);
@@ -173,9 +167,9 @@ onMounted(async () => {
 });
 
 const updateApplication = async (app) => {
+    showToast('info', 'Saving....', 'Saving application info.....');
     try {
         const data = {
-            status: app.status,
             date_issued: app.date_issued ? app.date_issued : null,
             ctpr_number: app.ctpr_number || '',
             ctpr_link: app.ctpr_link || '',

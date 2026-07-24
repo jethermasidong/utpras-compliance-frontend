@@ -3,7 +3,20 @@
     <ProvincialSidebar class="hidden md:block w-64 shrink-0" /> 
     <main class="flex-1 px-4">
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Application - {{ profile.program_applied }}</h1>
+      <div class="flex flex-row justify-between">
+        <h1 class="text-2xl font-bold text-gray-900 flex flex-row gap-3">Application - {{ profile.program_applied }}
+          <div class="mt-1 h-9 rounded-lg px-2 py-1 border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 cursor-pointer">
+            <ion-icon name="print-outline"></ion-icon>
+          </div>
+        </h1>
+        <router-link to="/compliance-dashboard">
+        <button class="font-bold h-9 flex flex-row text-xs items-center justify-center border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1 rounded-xl cursor-pointer transition-colors ">
+          <div class="mt-1">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          </div>Back
+        </button>
+        </router-link>
+      </div>
       <p class="text-gray-500 text-sm">Edit your profile and manage requirements below</p>
     </div>
 
@@ -38,9 +51,18 @@
         </div>
       </section>
 
+      <div class="p-6 border-b border-gray-100 rounded-2xl shadow-sm flex justify-between items-center">
+          <h2 class="text-xs font-bold text-black uppercase tracking-widest">Required Documents</h2>
+          <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">
+            {{ pendingCount }} Pending
+          </span>
+        </div>
+
+        
+
       <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Required Documents</h2>
+          <h2 class="text-xs font-bold text-black uppercase tracking-widest">Required Documents</h2>
           <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">
             {{ pendingCount }} Pending
           </span>
@@ -62,7 +84,16 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-              <tr v-for="req in documents" :key="req.requirement_id">
+
+              <template v-for="(items, categoryName) in groupedRequirements" :key="categoryName">
+        
+              <tr class="bg-blue-50/60">
+                <td colspan="9" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-900">
+                  {{ categoryName }} ({{ items.length }})
+                </td>
+              </tr>
+
+              <tr v-for="req in items" :key="req.requirement_id">
                 <td class="px-3 py-4 text-sm font-medium text-gray-700">{{ req.title }}</td>
                 <td class="px-3 py-4 text-xs font-medium text-gray-700">{{ req.description }}</td>
                 <td class="px-3 py-4">
@@ -77,14 +108,16 @@
                     <button 
                       v-if="req.file_url && req.file_url.trim() !== ''"
                       @click="openPreview(req)"
-                      class="text-green-700 font-bold text-xs bg-green-50 px-3 py-2 rounded-lg hover:bg-green-100 transition-colors"
+                      class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1 rounded-xl cursor-pointer transition-colors"
                     >
-                      View
+                      <div class="mt-1">
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </div>
                     </button>
 
                     <button 
                       @click="triggerFileInput(req.requirement_id)"
-                      class="text-blue-900 font-bold text-xs bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                      class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1 rounded-xl cursor-pointer transition-colors"
                     >
                       {{ req.file_url ? 'Change' : 'Upload' }}
                     </button>
@@ -93,40 +126,43 @@
                 <td class="px-3 py-4 text-center"><span class="text-[12px] rounded-md uppercase px-2 py-1 bg-gray-50 text-black">{{ formatDate(req.uploaded_at)}}</span></td>
                 <td class="px-3 py-4 text-sm">
                     <select 
-                        placeholder="Upload Document First"
                         v-if="req.file_url && req.file_url.trim() !== ''"
                         v-model="req.po_compliance" 
-                        class="w-25 bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-bold text-gray-700"
+                        class="w-32 bg-white border border-gray-200 rounded-xl text-center px-3 py-2 text-xs font-bold uppercase tracking-wide text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer"
                     >
                         <option disabled value="">Select status</option>
-                        <option value="pending">Pending</option>
-                        <option value="active">Yes</option>
-                        <option value="approved">No</option>
+                        <option value="pending" class="text-gray-500 font-medium">Pending</option>
+                        <option value="active" class="text-green-700 font-bold">Yes</option>
+                        <option value="approved" class="text-red-600 font-bold">No</option>
                     </select>
-                    <span v-else class="text-[10px] flex text-center font-bold px-2 py-1 rounded-md uppercase text-black bg-gray-50">
+                    <span v-else class="text-[10px] flex text-center font-bold px-2 py-1 rounded-xl uppercase text-black bg-gray-50">
                         Upload document first
                     </span>
                 </td>
                 <td class="px-3 py-4">
                   <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
-                        class="text-[10px] font-bold px-2 py-1 rounded-md uppercase">
+                        class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase">
                     {{ req.status || 'pending' }}
                   </span>
                 </td>
-                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-md uppercase bg-gray-50 text-black">{{ req.remarks || '...' }}</span></td>
-                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-md uppercase bg-gray-50 text-black">{{ req.reviewed_at || '...'}}</span></td>
-                <td class="px-3 py-4 text-center whitespace-nowrap space-x-1">
+                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ req.remarks || '...' }}</span></td>
+                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ req.reviewed_at || '...'}}</span></td>
+                <td class="px-3 py-4 text-left whitespace-nowrap space-x-1">
                   <button 
                     v-if="req.file_url && req.file_url.trim() !== ''"
                     @click="handlePOComplianceUpdate(req)"
-                    class="bg-blue-50 text-blue-800 font-bold text-xs px-5 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                    class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-15 py-1 rounded-xl transition-colors"
                   >
-                    Save Compliance
+                    Save
                   </button>
-                  <span v-else class="text-[10px] font-bold px-2 py-1 rounded-md uppercase text-black bg-gray-50">
+                  <span v-else class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase text-black bg-gray-50">
                     Upload document first
                   </span>
                 </td>
+              </tr>
+              </template>
+              <tr v-if="documents.length === 0">
+                <td colspan="4" class="text-center py-8 text-gray-400 text-xs">No requirements found.</td>
               </tr>
             </tbody>
           </table>
@@ -135,7 +171,7 @@
       
       </div>
     </main>
-      <div v-if="previewModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div v-if="previewModalOpen" class="fixed inset-0 z-50 flex items-center justify-center mb-20 bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh] overflow-hidden">
 
           <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -144,7 +180,7 @@
               &times;
             </button>
           </div>
-          <div class="p-6 flex-1 bg-gray-50 flex items-center justify-center overflow-auto min-h-[400px]">
+          <div class="p-6 flex-1 bg-gray-50 flex items-center justify-center overflow-auto min-h-100">
             
             <img 
               v-if="activePreviewUrl.match(/\.(jpg|jpeg|png|webp)(\?.*)?$/i)" 
@@ -201,20 +237,16 @@ import { viewApplicationsByUser } from '../../api/applicationApi.js';
 import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCompliance } from '../../api/documentApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
+import { arrowBackOutline } from 'ionicons/icons';
 
 const route = useRoute();
 const { showToast } = useToast();
+
 const originalProfile = ref({});
+
 const fileInputs = ref({});
 
 const activeRequirementId = ref(null);
-
-const triggerFileInput = (requirementId) => {
-  activeRequirementId.value = requirementId;
-  if (fileInputs.value[requirementId]) {
-    fileInputs.value[requirementId].click();
-  }
-};
 
 
 const appId = route.query.applicationId;
@@ -282,6 +314,15 @@ const saveProfile = async () => {
   }
 };
 
+
+const triggerFileInput = (requirementId) => {
+  activeRequirementId.value = requirementId;
+  if (fileInputs.value[requirementId]) {
+    fileInputs.value[requirementId].click();
+  }
+};
+
+
 const handleFileSelected = async (event, requirementId) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -315,7 +356,9 @@ const handleFileSelected = async (event, requirementId) => {
   }
 };
 
+
 const handlePOComplianceUpdate = async (req) => {
+  showToast('info', 'Saving....', 'Saving PO Compliance Status');
   try {
     const data = {
       po_compliance: req.po_compliance,
@@ -327,7 +370,8 @@ const handlePOComplianceUpdate = async (req) => {
   } catch (error) {
     showToast('error', 'Error', 'Could not save current data.');
   }
-}
+};
+
 
 
 const formatDate = (dateString) => {
@@ -365,5 +409,23 @@ const closePreview = () => {
   activePreviewUrl.value = '';
   activePreviewTitle.value = '';
 };
+
+const groupedRequirements = computed(() => {
+  return documents.value.reduce((groups, req) => {
+
+    if (req.category && req.category.toLowerCase() === 'hidden requirements') {
+      if (!req.is_public) {
+        return groups;
+      }
+    }
+    
+    const category = req.category ? req.category.toLowerCase() : 'uncategorized';
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+    groups[category].push(req);
+    return groups;
+  }, {});
+});
 
 </script>
