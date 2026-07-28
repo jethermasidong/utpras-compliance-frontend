@@ -34,7 +34,7 @@ const router = useRouter();
 const menuItems = [
   { name: 'Dashboard', path: '/regional-dashboard', icon: 'home-outline' },
   { name: 'Manage Programs', path: '/program-management', icon: 'albums-outline' },
-  { name: 'Applications', path: '/reports', icon: 'document-outline' },
+  { name: 'Applications', path: '/applications', icon: 'document-outline' },
   { name: 'User Management', path: '/user-management', icon: 'people-outline' },
 ];
 

@@ -16,6 +16,9 @@ import IBTProfile from './pages/provincial-office/IBTProfile.vue'
 import CompliancePage from './pages/provincial-office/CompliancePage.vue'
 import ComplianceDashboard from './pages/provincial-office/ComplianceDashboard.vue'
 import MTPManagement from './pages/regional-office/MTPManagement.vue'
+import Applications from './pages/regional-office/Applications.vue'
+import ROApplicationPage from './pages/regional-office/ROApplicationPage.vue'
+
 
 const routes = [
   { path: '/', component: HomePage},
@@ -31,7 +34,9 @@ const routes = [
   { path: '/program-application', component: ApplicationPage, meta: { requiresAuth: true }},
   { path: '/ibt-profile', component: IBTProfile, meta: { requiresAuth: true }},
   { path: '/compliance-dashboard', component: ComplianceDashboard, meta: { requiresAuth: true }},
-  { path: '/compliance-page', component: CompliancePage, meta: { requiresAuth: true }}
+  { path: '/compliance-page', component: CompliancePage, meta: { requiresAuth: true }},
+  { path: '/applications', component: Applications, meta: { requiresAuth: true }},
+  { path: '/ro-application-page', component: ROApplicationPage, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({

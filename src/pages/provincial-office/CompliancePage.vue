@@ -24,7 +24,7 @@
       
       <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Institution Profile</h2>
+          <h2 class="text-xs font-bold text-black uppercase tracking-widest">Institution Profile</h2>
           <button 
             @click="saveProfile" 
             :disabled="!hasChanged"
@@ -42,10 +42,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div v-for="(label, key) in fieldLabels" :key="key">
             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">{{ label }}</label>
-            <input 
+            <textarea
               v-model="profile[key]" 
               type="text"
-              class="w-full bg-gray-50 border border-gray-200 text-sm font-semibold text-gray-800 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              rows="2"
+              class="w-full bg-gray-50 border border-gray-200 text-sm font-semibold wrap-break-word text-gray-800 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             />
           </div>
         </div>
@@ -54,26 +55,18 @@
       <div class="p-6 border-b border-gray-100 rounded-2xl shadow-sm flex justify-between items-center">
           <h2 class="text-xs font-bold text-black uppercase tracking-widest">Required Documents</h2>
           <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">
-            {{ pendingCount }} Pending
+            {{ pendingCount }} Requirements
           </span>
         </div>
 
         
 
       <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-          <h2 class="text-xs font-bold text-black uppercase tracking-widest">Required Documents</h2>
-          <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">
-            {{ pendingCount }} Pending
-          </span>
-        </div>
-        
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-400">
+              <tr class="bg-gray-400/50 text-[10px] uppercase text-black">
                 <th class="px-3 py-4">Requirement Title</th>
-                <th class="px-3 py-4">Description</th>
                 <th class="px-3 py-4">Documents</th>
                 <th class="px-3 py-4">Date Uploaded</th>
                 <th class="px-3 py-4">PO Compliance</th>
@@ -94,8 +87,11 @@
               </tr>
 
               <tr v-for="req in items" :key="req.requirement_id">
-                <td class="px-3 py-4 text-sm font-medium text-gray-700">{{ req.title }}</td>
-                <td class="px-3 py-4 text-xs font-medium text-gray-700">{{ req.description }}</td>
+                <td class="px-3 py-4 text-sm font-medium text-gray-700 flex flex-col">{{ req.title }}
+                  <span class="text-[11px] font-light text-blue-600 rounded-full uppercase">
+                    {{ req.description || '' }} 
+                  </span>
+                </td>
                 <td class="px-3 py-4">
                   <input 
                     type="file" 
@@ -123,41 +119,48 @@
                     </button>
                   </div>
                 </td>
-                <td class="px-3 py-4 text-center"><span class="text-[12px] rounded-md uppercase px-2 py-1 bg-gray-50 text-black">{{ formatDate(req.uploaded_at)}}</span></td>
+                <td class="px-3 py-4 text-center"><span class="text-[10px] rounded-md uppercase px-2 py-1 bg-gray-50 text-black">{{ formatDate(req.uploaded_at)}}</span></td>
                 <td class="px-3 py-4 text-sm">
-                    <select 
-                        v-if="req.file_url && req.file_url.trim() !== ''"
-                        v-model="req.po_compliance" 
-                        class="w-32 bg-white border border-gray-200 rounded-xl text-center px-3 py-2 text-xs font-bold uppercase tracking-wide text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer"
-                    >
-                        <option disabled value="">Select status</option>
-                        <option value="pending" class="text-gray-500 font-medium">Pending</option>
-                        <option value="active" class="text-green-700 font-bold">Yes</option>
-                        <option value="approved" class="text-red-600 font-bold">No</option>
+                  <select 
+                      :disabled="!req.file_url || req.file_url.trim() === ''"
+                      v-model="req.po_compliance" 
+                      :class="[
+                          'w-32 border rounded-xl text-center px-3 py-2 text-xs font-bold uppercase tracking-wide shadow-sm transition-all duration-200 outline-none',
+                          (!req.file_url || req.file_url.trim() === '') 
+                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60' 
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 cursor-pointer'
+                      ]"
+                  >
+                      <option disabled value="">Select status</option>
+                      <option value="compliant" class="text-green-700 font-bold">Compliant</option>
+                      <option value="non-compliant" class="text-red-600 font-bold">Non-Compliant</option>
                     </select>
-                    <span v-else class="text-[10px] flex text-center font-bold px-2 py-1 rounded-xl uppercase text-black bg-gray-50">
-                        Upload document first
-                    </span>
                 </td>
                 <td class="px-3 py-4">
                   <span :class="req.status === 'compliant' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
                         class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase">
-                    {{ req.status || 'pending' }}
+                    {{ req.status || '...' }}
                   </span>
                 </td>
-                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ req.remarks || '...' }}</span></td>
-                <td class="px-3 py-4"><span class="text-[12px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ req.reviewed_at || '...'}}</span></td>
-                <td class="px-3 py-4 text-left whitespace-nowrap space-x-1">
+                <td class="px-3 py-4 text-xs font-medium text-gray-700 max-w-55">
+                    <div class="max-h-12 overflow-y-auto pr-1 wrap-break-word scrollbar-thin">
+                        {{ req.remarks || '...' }}
+                    </div>
+                </td>
+                <td class="px-3 py-4 text-center"><span class="text-[10px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ formatDate(req.reviewed_at) || '...'}}</span></td>
+                <td class="px-2 py-4 text-left whitespace-nowrap space-x-1">
                   <button 
-                    v-if="req.file_url && req.file_url.trim() !== ''"
-                    @click="handlePOComplianceUpdate(req)"
-                    class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-15 py-1 rounded-xl transition-colors"
+                      :disabled="!req.file_url || req.file_url.trim() === ''"
+                      @click="handlePOComplianceUpdate(req)"
+                      :class="[
+                          'font-bold text-xs border-2 px-5 py-1 rounded-xl transition-colors',
+                          (!req.file_url || req.file_url.trim() === '') 
+                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60' 
+                              : 'bg-white text-black border-gray-200 hover:border-blue-300 hover:bg-blue-100 cursor-pointer'
+                      ]"
                   >
-                    Save
+                      Save
                   </button>
-                  <span v-else class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase text-black bg-gray-50">
-                    Upload document first
-                  </span>
                 </td>
               </tr>
               </template>
@@ -168,7 +171,22 @@
           </table>
         </div>
       </section>
-      
+
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-10 p-4">
+        <div v-for="app in application" :key="app.application_id || app.id" class="flex flex-col md:flex-row items-center gap-3">
+          <div class="flex items-center gap-2 w-full md:w-auto">
+            <span class="text-center py-1 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold uppercase text-gray-800">RO Final Evaluation:</span>
+          </div>
+          <span :class="app.status === 'complete and successful' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'" 
+            class="w-auto md:w-1/2 text-center py-1 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold uppercase text-gray-800">
+            {{ app.status || 'Pending Review' }}
+          </span>
+          <div class="w-full md:w-1/3 text-center py-1 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold uppercase text-gray-800">
+            Date
+          </div>
+        </div>
+      </section>
+        
       </div>
     </main>
       <div v-if="previewModalOpen" class="fixed inset-0 z-50 flex items-center justify-center mb-20 bg-black/50 backdrop-blur-sm p-4">
@@ -233,7 +251,7 @@
 import { ref, computed, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
-import { viewApplicationsByUser } from '../../api/applicationApi.js';
+import { viewApplicationByUser } from '../../api/applicationApi.js';
 import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCompliance } from '../../api/documentApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
@@ -247,7 +265,6 @@ const originalProfile = ref({});
 const fileInputs = ref({});
 
 const activeRequirementId = ref(null);
-
 
 const appId = route.query.applicationId;
 const progId = route.query.programId;
@@ -275,8 +292,26 @@ const fieldLabels = {
 };
 
 const documents = ref([]);
+const application = ref([]);
 
 const pendingCount = computed(() => documents.value.filter(r => !r.status || r.status === 'pending').length);
+
+const fetchApplication = async () => {
+  try {
+    const rawApps = await viewApplicationByUser(appId);
+    const appData = Array.isArray(rawApps) ? rawApps[0] : (rawApps.data || rawApps);
+
+    if (appData) {
+      application.value = [{
+        ...appData,
+        date_issued: appData.date_issued ? appData.date_issued.split('T')[0] : ''
+      }];
+    }
+  } catch (error) {
+    console.error("Failed to load applications:", error);
+    showToast('error', 'Error', 'Could not load current data.');
+  }
+};
 
 onMounted(async () => {
   if (appId) {
@@ -291,6 +326,7 @@ onMounted(async () => {
         documents.value = await viewDocuments(appId, progId);
     }
   }
+  await fetchApplication(appId);
 });
 
 const hasChanged = computed(() => {
@@ -411,21 +447,36 @@ const closePreview = () => {
 };
 
 const groupedRequirements = computed(() => {
-  return documents.value.reduce((groups, req) => {
+  const categoryOrder = [
+    'corporate and administrative documents',
+    'curricular requirements',
+    'program fees', 
+    'additional requirements',
+    'hidden requirements',
+  ];
 
-    if (req.category && req.category.toLowerCase() === 'hidden requirements') {
-      if (!req.is_public) {
-        return groups;
-      }
-    }
-    
+  const groups = documents.value.reduce((acc, req) => {
     const category = req.category ? req.category.toLowerCase() : 'uncategorized';
-    if (!groups[category]) {
-      groups[category] = [];
+    if (!acc[category]) {
+      acc[category] = [];
     }
-    groups[category].push(req);
-    return groups;
+    acc[category].push(req);
+    return acc;
   }, {});
-});
 
+  const sortedGroups = {};
+  categoryOrder.forEach(cat => {
+    if (groups[cat]) {
+      sortedGroups[cat] = groups[cat];
+    }
+  });
+
+  Object.keys(groups).forEach(cat => {
+    if (!sortedGroups[cat]) {
+      sortedGroups[cat] = groups[cat];
+    }
+  });
+
+  return sortedGroups;
+});
 </script>

@@ -1,11 +1,29 @@
 <template>
   <div class="p-6 md:p-10 max-w-8xl mx-auto">
-    <ProvincialSidebar class="hidden md:block" /> 
+    <RegionalSidebar class="hidden md:block" /> 
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Provincial Office Compliance Dashboard</h1>
+      <h1 class="text-2xl font-bold text-gray-900">Regional Office Application Management</h1>
       <p class="text-gray-500 font-extralight">View pending applications based on programs</p>
     </div>
 
+    
+    <div class="flex gap-4 overflow-x-auto pb-2 mb-4">
+        <button 
+        v-for="province in provinces" :key="province"
+        @click="activeProvince = province "
+        :class="[
+            'px-5 py-2 font-bold rounded-xl transition-all duration-200 border-2 whitespace-nowrap',
+            activeProvince === province 
+            ? 'bg-blue-900 text-white border-blue-900 shadow-md shadow-blue-200' 
+            : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+        ]"
+        >
+        {{ province }}
+        </button>
+    </div>
+
+    <div class="border border-t border-gray-200 mb-4">
+    </div>
 
     <div class="flex justify-between items-center mb-8">
   
@@ -14,7 +32,7 @@
         v-for="program in programs" :key="program.id"
         @click="selectProgram(program)"
         :class="[
-            'px-5 py-2 font-bold rounded-xl transition-all duration-200 border-2 whitespace-nowrap',
+            'px-4 py-1 font-bold rounded-xl transition-all duration-200 border-2 whitespace-nowrap',
             activeProgram?.id === program.id 
             ? 'bg-blue-900 text-white border-blue-900 shadow-md shadow-blue-200' 
             : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
@@ -23,6 +41,7 @@
         {{ program.program_name }}
         </button>
     </div>
+
     <router-link to="/program-application" class="shrink-0 ml-4">
         <button class="px-5 py-2 font-bold rounded-xl transition-all duration-200 border-2 hover:border-blue-300 bg-white text-black border-gray-200 shadow-md shadow-blue-200">
         Create Application
@@ -66,36 +85,22 @@
                     {{ app.program_applied }}
                 </td>
                 
-                <td class="px-4 py-4 text-sm">
-                    <input 
-                        type="date" 
-                        v-model="app.date_issued" 
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                <td class="px-4 py-4 text-sm text-gray-600">
+                    {{ app.date_issued }}                    
                 </td>
 
-                <td class="px-4 py-4 text-sm">
-                    <input 
-                        type="text" 
-                        v-model="app.ctpr_number" 
-                        placeholder="Enter CTPR #"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                <td class="px-4 py-4 text-sm text-gray-600">
+                    {{ app.ctpr_number }}
                 </td>
 
-                <td class="px-4 py-4 text-sm">
-                    <input 
-                        type="text" 
-                        v-model="app.ctpr_link" 
-                        placeholder="Enter Link"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                <td class="px-4 py-4 text-sm text-gray-600">
+                    {{ app.ctpr_link }}
                 </td>
 
-                <td class="px-3 py-4 text-center">
+                <td class="px-3 py-4 text-left">
                   <span :class="app.status === 'complete and successful' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
-                        class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase">
-                    {{ app.status || '...' }}
+                        class="text-[10px] font-bold px-1 py-1 rounded-xl uppercase">
+                    {{ app.status || 'pending' }} 
                   </span>
                 </td>
 
@@ -104,12 +109,6 @@
                 </td>
                 
                 <td class="px-4 py-4 text-right whitespace-nowrap space-x-1">
-                    <button 
-                    @click="updateApplication(app)"
-                    class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-2 rounded-xl transition-colors"
-                    >
-                    Save
-                    </button>
                     <button 
                     @click="goToCompliance(app.id, app.program_id)"
                     class="font-bold border-2 hover:border-blue-300 text-xs bg-white text-black border-gray-200 px-3 py-2 rounded-xl hover:bg-blue-100 transition-colors"
@@ -131,9 +130,10 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
 import { viewPrograms } from '../../api/programApi.js';
-import { editApplications, viewApplicationsByUser } from '../../api/applicationApi.js';
+import { viewAllApplications, viewApplicationsByUser } from '../../api/applicationApi.js';
 import { viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
+import RegionalSidebar from '../../components/RegionalSidebar.vue';
 
 const router = useRouter();
 const { showToast } = useToast();
@@ -143,7 +143,7 @@ const activeProgram = ref(null);
 
 const fetchApplications = async () => {
     try {
-        const rawApps = await viewApplicationsByUser();
+        const rawApps = await viewAllApplications();
         applications.value = rawApps.map(app => ({
              ...app,
              date_issued: app.date_issued ? app.date_issued.split('T')[0] : ''
@@ -166,36 +166,32 @@ onMounted(async () => {
     }
 });
 
-const updateApplication = async (app) => {
-    showToast('info', 'Saving....', 'Saving application info.....');
-    try {
-        const data = {
-            date_issued: app.date_issued ? app.date_issued : null,
-            ctpr_number: app.ctpr_number || '',
-            ctpr_link: app.ctpr_link || '',
-        };
-
-        await editApplications(app.id, data);
-        showToast('success', 'Saved', 'Application CTPR details updated successfully.');
-        await fetchApplications();
-    } catch (error) {
-        showToast('error', 'Error', 'Could not save current data.');
-    }
-}
-
 
 
 const selectProgram = (program) => {
   activeProgram.value = program;
 };
 
+const activeProvince = ref('All');
+const provinces = ref(['All', 'Benguet', 'Mountain Province', 'Ifugao', 'Abra', 'Kalinga']);
+
 const filteredApplications = computed(() => {
-  if (!activeProgram.value) return [];
-  return applications.value.filter(app => app.program_id === activeProgram.value.id);
+  return applications.value.filter(app => {
+    const matchesProgram = activeProgram.value ? String(app.program_id) === String(activeProgram.value.id) : true;
+    
+    if (activeProvince.value === 'All') {
+      return matchesProgram;
+    }
+
+    const appProvince = (app.province || '').trim().toLowerCase();
+    const selectedProvince = activeProvince.value.trim().toLowerCase();
+    
+    return matchesProgram && (appProvince === selectedProvince);
+  });
 });
 
 const goToCompliance = (id, program_id) => {
-  router.push({ path: '/compliance-page', query: { applicationId: id,
+  router.push({ path: '/ro-application-page', query: { applicationId: id,
     programId: program_id
    } });
 };
@@ -210,4 +206,7 @@ const formatDate = (dateString) => {
     day: 'numeric'
   }).format(date);
 };
+
+
+
 </script>

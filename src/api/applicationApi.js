@@ -19,10 +19,46 @@ export const editApplications = async (id, data) => {
     }
 };
 
+export const editROApplicationByProgID = async (program_id, data) => {
+    try {
+        const response = await api.put(`/ro-applications/update/${program_id}`, data);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};
+
 export const viewApplicationsByUser = async () => {
     try {
         const response = await api.get('/application');
         return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};
+
+export const viewApplicationByUser = async (id) => {
+    try {
+        const response = await api.get(`/application/${id}`);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};
+
+export const viewAllApplications = async (id) => {
+    try {
+        const response = await api.get('/applications');
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};
+
+export const viewApplicationByID = async (id) => {
+    try {
+        const response = await api.get(`/ro-application/${id}`);
+        return response.data; 
     } catch (err) {
         throw err.response?.data || err.message;
     }
