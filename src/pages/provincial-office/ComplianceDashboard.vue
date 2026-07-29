@@ -46,8 +46,8 @@
             <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-900">
-                    <th class="px-4 py-4 min-w-37.5">Applicant Name</th>
-                    <th class="px-4 py-4 min-w-32.5">Program Applied</th>
+                    <th class="px-4 py-4 min-w-37.5">{{ currentConfig.col1Header }}</th>
+                    <th class="px-4 py-4 min-w-32.5">{{ currentConfig.col2Header }}</th>
                     <th class="px-4 py-4 min-w-37.5">Date Issued</th>
                     <th class="px-4 py-4 min-w-32.5">CTPR Number</th>
                     <th class="px-4 py-4 min-w-40">CTPR Link</th>
@@ -59,11 +59,11 @@
             <tbody class="divide-y divide-gray-50 align-middle">
                 <tr v-for="app in filteredApplications" :key="app.id" class="hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-4 text-sm font-medium text-gray-800">
-                    {{ app.applicant_name }}
+                    {{ app[currentConfig.col1Key] || 'N/A' }}
                 </td>
                 
                 <td class="px-3 py-4 text-sm text-gray-600">
-                    {{ app.program_applied }}
+                    {{ app[currentConfig.col2Key] || 'N/A' }}
                 </td>
                 
                 <td class="px-4 py-4 text-sm">
@@ -76,7 +76,7 @@
 
                 <td class="px-4 py-4 text-sm">
                     <input 
-                        type="text" 
+                        type="number" 
                         v-model="app.ctpr_number" 
                         placeholder="Enter CTPR #"
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
@@ -92,11 +92,18 @@
                     />
                 </td>
 
-                <td class="px-3 py-4 text-center">
-                  <span :class="app.status === 'complete and successful' ? 'text-green-600 bg-green-50' : 'text-orange-600 bg-orange-50'"
-                        class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase">
-                    {{ app.status || '...' }}
-                  </span>
+                <td class="px-3 py-4 text-left">
+                  <span :class="{
+                    'text-green-700 bg-green-50': app.status === 'complete and successful',
+                    'text-green-400 bg-green-50': app.status === 'complete with findings',
+                    'text-orange-600 bg-orange-50': app.status === 'incomplete with findings',
+                    'text-red-700 bg-red-50': app.status === 'incomplete and unsuccessful',
+                    'text-gray-500 bg-gray-50': !app.status
+                }" 
+                    class="text-[10px] font-bold px-2 py-1 rounded-xl uppercase"
+                >
+                    {{ app.status || 'Pending Review' }}
+                </span>
                 </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
@@ -140,6 +147,48 @@ const { showToast } = useToast();
 const programs = ref([]);
 const applications = ref([]);
 const activeProgram = ref(null);
+
+
+const programConfigs = {
+    ebet: {
+        col1Header: 'Enterprise Name',
+        col1Key: 'enterprise_name',
+        col2Header: 'Program Title',
+        col2Key: 'program_title',
+        route: '/ebet-compliance-page'
+    },
+    mtp: {
+        col1Header: 'Institution Name', 
+        col1Key: 'applicant_name',
+        col2Header: 'Program Applied',
+        col2Key: 'program_applied',
+        route: '/mtp-compliance-page'
+    },
+    mcc: {
+        col1Header: 'Institution Name', 
+        col1Key: 'applicant_name',
+        col2Header: 'Program Applied',
+        col2Key: 'program_applied',
+        route: '/mcc-compliance-page'
+    },
+    default: { 
+        col1Header: 'Applicant Name',
+        col1Key: 'applicant_name',
+        col2Header: 'Program Applied',
+        col2Key: 'program_applied',
+        route: '/compliance-page'
+    }
+};
+
+const currentConfig = computed(() => {
+    const name = (activeProgram.value?.program_name || '').toLowerCase();
+    
+    if (name.includes('ebet')) return programConfigs.ebet;
+    if (name.includes('mtp')) return programConfigs.mtp;
+    if (name.includes('mcc')) return programConfigs.mcc;
+    
+    return programConfigs.default;
+});
 
 const fetchApplications = async () => {
     try {
@@ -195,9 +244,10 @@ const filteredApplications = computed(() => {
 });
 
 const goToCompliance = (id, program_id) => {
-  router.push({ path: '/compliance-page', query: { applicationId: id,
-    programId: program_id
-   } });
+  router.push({ 
+      path: currentConfig.value.route, 
+      query: { applicationId: id, programId: program_id } 
+  });
 };
 
 const formatDate = (dateString) => {

@@ -4,7 +4,7 @@
     <main class="flex-1 px-4">
     <div class="mb-6">
       <div class="flex flex-row justify-between">
-        <h1 class="text-2xl font-bold text-gray-900 flex flex-row gap-3">Application - {{ profile.program_applied }}
+        <h1 class="text-2xl font-bold text-gray-900 flex flex-row gap-3">Application - {{ profile.program_title }}
           <div class="mt-1 h-9 rounded-lg px-2 py-1 border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 cursor-pointer">
             <ion-icon name="print-outline"></ion-icon>
           </div>
@@ -261,7 +261,7 @@ import { useToast } from '../../../composables/useToast.js';
 import { viewApplicationByUser } from '../../api/applicationApi.js';
 import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCompliance } from '../../api/documentApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
-import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
+import { editEBETProfile, viewEBETProfileByApplicationID } from '../../api/ebetProfile.js';
 import { arrowBackOutline } from 'ionicons/icons';
 
 const route = useRoute();
@@ -277,25 +277,26 @@ const appId = route.query.applicationId;
 const progId = route.query.programId;
 
 const profile = ref({
-  applicant_name: '',
-  address: '',
-  program_applied: '',
-  training_capacity: '',
-  telephone: '',
-  duration: '',
-  no_of_trainees: '',
-  no_of_batches: ''
+  program_type: '', program_title: '', nominal_duration: '', enterprise_name: '', total_employees: '', 
+  training_site: '', street_address: '', barangay: '', city: '', province: '', zipcode: '', website: '',
+  telephone: '', mobile_no: ''
 });
 
 const fieldLabels = {
-  applicant_name: 'Name of the Applicant Institution',
-  address: 'Address',
-  program_applied: 'Program Applied',
-  training_capacity: 'Training Capacity',
-  telephone: 'Tel/Fax No',
-  duration: 'Duration (In Hrs)',
-  no_of_trainees: 'No of Trainees per batch',
-  no_of_batches: 'No of Batches per year',
+    program_type: 'EBET Programs',
+    program_title: 'Program Title',
+    nominal_duration: 'Nominal Duration (No. of Hours, Months/Years)',
+    enterprise_name: 'Name of Enterprise',
+    total_employees: 'Total Number of Employees',
+    training_site: 'Training Site/Venue Address',
+    street_address: 'Street Address',
+    barangay: 'Barangay',
+    city: 'City',
+    province: 'Province',
+    zipcode: 'Area Zip Code',
+    website: 'Website (if any)',
+    telephone: 'Telephone (Landline no.)',
+    mobile_no: 'Mobile No.'
 };
 
 const documents = ref([]);
@@ -322,7 +323,7 @@ const fetchApplication = async () => {
 
 onMounted(async () => {
   if (appId) {
-    const data = await viewIBTProfileByApplicationID(appId);
+    const data = await viewEBETProfileByApplicationID(appId);
     const loadedData = Array.isArray(data) ? data[0] : data;
     if (loadedData) {
       profile.value = { ...loadedData };
@@ -343,8 +344,8 @@ const hasChanged = computed(() => {
 
 const saveProfile = async () => {
   try {
-    const response = await editIBTProfile(appId, profile.value);
-    const refreshedData = await viewIBTProfileByApplicationID(appId);
+    const response = await editEBETProfile(appId, profile.value);
+    const refreshedData = await viewEBETProfileByApplicationID(appId);
     const loadedData = Array.isArray(refreshedData) ? refreshedData[0] : refreshedData;
     
     if (loadedData) {

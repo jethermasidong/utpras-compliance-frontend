@@ -41,13 +41,6 @@
         {{ program.program_name }}
         </button>
     </div>
-
-    <router-link to="/program-application" class="shrink-0 ml-4">
-        <button class="px-5 py-2 font-bold rounded-xl transition-all duration-200 border-2 hover:border-blue-300 bg-white text-black border-gray-200 shadow-md shadow-blue-200">
-        Create Application
-        </button>
-    </router-link>
-
     </div>
 
 
@@ -65,8 +58,8 @@
             <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50/50 text-[10px] uppercase text-gray-900">
-                    <th class="px-4 py-4 min-w-37.5">Applicant Name</th>
-                    <th class="px-4 py-4 min-w-32.5">Program Applied</th>
+                    <th class="px-4 py-4 min-w-37.5">{{ currentConfig.col1Header }}</th>
+                    <th class="px-4 py-4 min-w-32.5">{{ currentConfig.col2Header }}</th>
                     <th class="px-4 py-4 min-w-37.5">Date Issued</th>
                     <th class="px-4 py-4 min-w-32.5">CTPR Number</th>
                     <th class="px-4 py-4 min-w-40">CTPR Link</th>
@@ -78,11 +71,11 @@
             <tbody class="divide-y divide-gray-50 align-middle">
                 <tr v-for="app in filteredApplications" :key="app.id" class="hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-4 text-sm font-medium text-gray-800">
-                    {{ app.applicant_name }}
+                    {{ app[currentConfig.col1Key] || 'N/A' }}
                 </td>
                 
                 <td class="px-3 py-4 text-sm text-gray-600">
-                    {{ app.program_applied }}
+                    {{ app[currentConfig.col1Key] || 'N/A' }}
                 </td>
                 
                 <td class="px-4 py-4 text-sm text-gray-600">
@@ -141,6 +134,49 @@ const programs = ref([]);
 const applications = ref([]);
 const activeProgram = ref(null);
 
+
+const programConfigs = {
+    ebet: {
+        col1Header: 'Enterprise Name',
+        col1Key: 'enterprise_name',
+        col2Header: 'Program Title',
+        col2Key: 'program_title',
+        route: '/ro-ebet-application-page'
+    },
+    mtp: {
+        col1Header: 'Institution Name', 
+        col1Key: 'applicant_name',
+        col2Header: 'Program Applied',
+        col2Key: 'program_applied',
+        route: '/ro-mtp-application-page'
+    },
+    mcc: {
+        col1Header: 'Institution Name', 
+        col1Key: 'applicant_name',
+        col2Header: 'Program Applied',
+        col2Key: 'program_applied',
+        route: '/ro-mcc-compliance-page'
+    },
+    default: { 
+        col1Header: 'Applicant Name',
+        col1Key: 'applicant_name',
+        col2Header: 'Program Applied',
+        col2Key: 'program_applied',
+        route: '/ro-application-page'
+    }
+};
+
+const currentConfig = computed(() => {
+    const name = (activeProgram.value?.program_name || '').toLowerCase();
+    
+    if (name.includes('ebet')) return programConfigs.ebet;
+    if (name.includes('mtp')) return programConfigs.mtp;
+    if (name.includes('mcc')) return programConfigs.mcc;
+    
+    return programConfigs.default;
+});
+
+
 const fetchApplications = async () => {
     try {
         const rawApps = await viewAllApplications();
@@ -191,9 +227,10 @@ const filteredApplications = computed(() => {
 });
 
 const goToCompliance = (id, program_id) => {
-  router.push({ path: '/ro-application-page', query: { applicationId: id,
-    programId: program_id
-   } });
+  router.push({ 
+      path: currentConfig.value.route, 
+      query: { applicationId: id, programId: program_id } 
+  });
 };
 
 const formatDate = (dateString) => {

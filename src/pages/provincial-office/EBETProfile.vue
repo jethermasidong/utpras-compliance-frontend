@@ -3,7 +3,7 @@
     <ProvincialSidebar class="hidden md:block" />
     
     <div class="mb-10">
-      <h1 class="text-3xl font-bold text-gray-900">IBT Application</h1>
+      <h1 class="text-3xl font-bold text-gray-900">EBET Application</h1>
       <p class="text-gray-500 mt-2">Complete your profile information below</p>
     </div>
 
@@ -15,11 +15,26 @@
           Profile Information
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-5">
+        <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+            {{ fieldLabels['program_type'] }}
+            </label>
+            <select 
+            v-model="form.program_type"
+            class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-md rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all cursor-pointer"
+            >
+            <option disabled value="">Select {{ fieldLabels['program_type'].toLowerCase() }}</option>
+            <option value="general ebet">General EBET</option>
+            <option value="apprenticeship">Apprenticeship</option>
+            <option value="upskilling">Upskilling</option>
+            </select>
+        </div>
           <div v-for="key in inputFields" :key="key" class="space-y-1">
             <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
               {{ fieldLabels[key] }}
             </label>
             <input 
+              :required="['program_title', 'enterprise_name'].includes(key)"
               v-model="form[key]" 
               :type="isNumber(key) ? 'number' : 'text'"
               class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-md rounded-xl p-3 
@@ -30,8 +45,8 @@
         </div>  
       </section>
 
-      <div class="flex justify-end -mb-5">
-        <button @click="addIBTApplication" class="px-5 py-3 bg-blue-900 text-white font-bold rounded-2xl shadow-lg hover:bg-blue-800 transition-all transform hover:-translate-y-1">
+      <div class="flex justify-end mb-10">
+        <button @click="addEBETApplication" class="px-5 py-3 bg-blue-900 text-white font-bold rounded-2xl shadow-lg hover:bg-blue-800 transition-all transform hover:-translate-y-1">
           Submit Application
         </button>
       </div>
@@ -43,7 +58,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
-import { createIBTProfile } from '../../api/ibtProfileApi.js';
+import { createEBETProfile } from '../../api/ebetProfile.js';
 import { deleteApplication } from '../../api/applicationApi.js';
 import { useToast } from '../../../composables/useToast.js';
 
@@ -55,32 +70,44 @@ const appId = ref(route.query.applicationId);
 const isSubmitted = ref(false); 
 
 const inputFields = [
-  'applicant_name', 
-  'telephone', 
-  'address', 
-  'duration', 
-  'program_applied', 
-  'no_of_trainees', 
-  'training_capacity', 
-  'no_of_batches'
+    'program_title',
+    'nominal_duration',
+    'enterprise_name',
+    'total_employees',
+    'training_site',
+    'street_address',
+    'barangay',
+    'city',
+    'province',
+    'zipcode',
+    'website',
+    'telephone',
+    'mobile_no'
 ];
 
 const fieldLabels = {
-    applicant_name: 'Name of the Applicant Institution',
-    telephone: 'Tel/Fax No',
-    address: 'Address',
-    duration: 'Duration (in Hrs.)',
-    program_applied: 'Program Applied',
-    no_of_trainees: 'No of trainees per batch',
-    training_capacity: 'Training Capacity',
-    no_of_batches: 'No of batches per year'
+    program_type: 'EBET Programs',
+    program_title: 'Program Title',
+    nominal_duration: 'Nominal Duration (No. of Hours, Months/Years)',
+    enterprise_name: 'Name of Enterprise',
+    total_employees: 'Total Number of Employees',
+    training_site: 'Training Site/Venue Address',
+    street_address: 'Street Address',
+    barangay: 'Barangay',
+    city: 'City',
+    province: 'Province',
+    zipcode: 'Area Zip Code',
+    website: 'Website (if any)',
+    telephone: 'Telephone (Landline no.)',
+    mobile_no: 'Mobile No.'
 };
 
-const isNumber = (key) => ['telephone', 'duration', 'no_of_trainees', 'training_capacity', 'no_of_batches'].includes(key);
+const isNumber = (key) => ['nominal_duration', 'total_employees', 'zipcode', 'telephone', 'mobile_no'].includes(key);
 
 const form = ref({
-  applicant_name: '', telephone: '', address: '', 
-  duration: '', program_applied: '', no_of_trainees: '', training_capacity: '', no_of_batches: ''
+  program_type: '', program_title: '', nominal_duration: '', enterprise_name: '', total_employees: '', 
+  training_site: '', street_address: '', barangay: '', city: '', province: '', zipcode: '', website: '',
+  telephone: '', mobile_no: ''
 });
 
 
@@ -105,7 +132,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 
 
-const addIBTApplication = async () => {
+const addEBETApplication = async () => {
     console.log("Current App ID value:", appId.value);
 
     if (!appId.value) {
@@ -122,18 +149,13 @@ const addIBTApplication = async () => {
         ...sanitizedForm,
         application_id: appId.value
     };
-    const response = await createIBTProfile(data);
+    const response = await createEBETProfile(data);
     showToast('success', 'Application Submitted', 'Your profile has been saved successfully!');
     isSubmitted.value = true;
     form.value = {
-        applicant_name: '',
-        telephone: '',
-        address: '',
-        duration: '',
-        program_applied: '',
-        no_of_trainees: '',
-        training_capacity: '',
-        no_of_batches: ''
+        program_type: '', program_title: '', nominal_duration: '', enterprise_name: '', total_employees: '', 
+        training_site: '', street_address: '', barangay: '', city: '', province: '', zipcode: '', website: '',
+        telephone: '', mobile_no: ''
     };
     router.push('/compliance-dashboard');
   } catch (error) {

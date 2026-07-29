@@ -255,7 +255,7 @@
   import { viewApplicationByID, editROApplicationByProgID } from '../../api/applicationApi.js';
   import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCompliance } from '../../api/documentApi.js';
   import { createDocumentReview, updateDocumentReview } from '../../api/documentReviewApi.js';
-  import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
+  import { viewEBETProfileByApplicationID } from '../../api/ebetProfile.js';
   import { arrowBackOutline } from 'ionicons/icons';
   import RegionalSidebar from '../../components/RegionalSidebar.vue';
 import { create } from 'axios';
@@ -273,25 +273,26 @@ import { create } from 'axios';
   const progId = route.query.programId;
 
   const profile = ref({
-    applicant_name: '',
-    address: '',
-    program_applied: '',
-    training_capacity: '',
-    telephone: '',
-    duration: '',
-    no_of_trainees: '',
-    no_of_batches: ''
+    program_type: '', program_title: '', nominal_duration: '', enterprise_name: '', total_employees: '', 
+    training_site: '', street_address: '', barangay: '', city: '', province: '', zipcode: '', website: '',
+    telephone: '', mobile_no: ''
   });
 
   const fieldLabels = {
-    applicant_name: 'Name of the Applicant Institution',
-    address: 'Address',
-    program_applied: 'Program Applied',
-    training_capacity: 'Training Capacity',
-    telephone: 'Tel/Fax No',
-    duration: 'Duration (In Hrs)',
-    no_of_trainees: 'No of Trainees per batch',
-    no_of_batches: 'No of Batches per year',
+    program_type: 'EBET Programs',
+    program_title: 'Program Title',
+    nominal_duration: 'Nominal Duration (No. of Hours, Months/Years)',
+    enterprise_name: 'Name of Enterprise',
+    total_employees: 'Total Number of Employees',
+    training_site: 'Training Site/Venue Address',
+    street_address: 'Street Address',
+    barangay: 'Barangay',
+    city: 'City',
+    province: 'Province',
+    zipcode: 'Area Zip Code',
+    website: 'Website (if any)',
+    telephone: 'Telephone (Landline no.)',
+    mobile_no: 'Mobile No.'
   };
 
   const documents = ref([]);
@@ -318,7 +319,7 @@ import { create } from 'axios';
 
   onMounted(async () => {
     if (appId) {
-      const data = await viewIBTProfileByApplicationID(appId);
+      const data = await viewEBETProfileByApplicationID(appId);
       const loadedData = Array.isArray(data) ? data[0] : data;
       if (loadedData) {
         profile.value = { ...loadedData };
@@ -437,7 +438,6 @@ import { create } from 'axios';
     const categoryOrder = [
       'corporate and administrative documents',
       'curricular requirements',
-      'training delivery requirements',
       'program fees', 
       'additional requirements',
       'hidden requirements',

@@ -18,6 +18,9 @@ import ComplianceDashboard from './pages/provincial-office/ComplianceDashboard.v
 import MTPManagement from './pages/regional-office/MTPManagement.vue'
 import Applications from './pages/regional-office/Applications.vue'
 import ROApplicationPage from './pages/regional-office/ROApplicationPage.vue'
+import EBETProfile from './pages/provincial-office/EBETProfile.vue'
+import EBETCompliancePage from './pages/provincial-office/EBETCompliancePage.vue'
+import ROEBETApplicationPage from './pages/regional-office/ROEBETApplicationPage.vue'
 
 
 const routes = [
@@ -36,7 +39,10 @@ const routes = [
   { path: '/compliance-dashboard', component: ComplianceDashboard, meta: { requiresAuth: true }},
   { path: '/compliance-page', component: CompliancePage, meta: { requiresAuth: true }},
   { path: '/applications', component: Applications, meta: { requiresAuth: true }},
-  { path: '/ro-application-page', component: ROApplicationPage, meta: { requiresAuth: true }}
+  { path: '/ro-application-page', component: ROApplicationPage, meta: { requiresAuth: true }},
+  { path: '/ebet-profile', component: EBETProfile, meta: { requiresAuth: true }},
+  { path: '/ebet-compliance-page', component: EBETCompliancePage, meta: { requiresAuth: true }},
+  { path: '/ro-ebet-application-page', component: ROEBETApplicationPage, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({
