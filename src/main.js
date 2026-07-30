@@ -21,6 +21,9 @@ import ROApplicationPage from './pages/regional-office/ROApplicationPage.vue'
 import EBETProfile from './pages/provincial-office/EBETProfile.vue'
 import EBETCompliancePage from './pages/provincial-office/EBETCompliancePage.vue'
 import ROEBETApplicationPage from './pages/regional-office/ROEBETApplicationPage.vue'
+import MCCProfile from './pages/provincial-office/MCCProfile.vue'
+import MCCCompliancePage from './pages/provincial-office/MCCCompliancePage.vue'
+import ROMCCApplicationPage from './pages/regional-office/ROMCCApplicationPage.vue'
 
 
 const routes = [
@@ -42,7 +45,10 @@ const routes = [
   { path: '/ro-application-page', component: ROApplicationPage, meta: { requiresAuth: true }},
   { path: '/ebet-profile', component: EBETProfile, meta: { requiresAuth: true }},
   { path: '/ebet-compliance-page', component: EBETCompliancePage, meta: { requiresAuth: true }},
-  { path: '/ro-ebet-application-page', component: ROEBETApplicationPage, meta: { requiresAuth: true }}
+  { path: '/ro-ebet-application-page', component: ROEBETApplicationPage, meta: { requiresAuth: true }},
+  { path: '/mcc-profile', component: MCCProfile, meta: { requiresAuth: true }},
+  { path: '/mcc-compliance-page', component: MCCCompliancePage, meta: { requiresAuth: true }},
+  { path: '/ro-mcc-application-page', component: ROMCCApplicationPage, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({

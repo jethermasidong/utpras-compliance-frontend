@@ -70,9 +70,9 @@
                     !form.category ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
                 ]">
                     <option disabled value="">Select category</option>
-                    <option value="corporate and administrative documents">Corporate and Administrative Documents</option>
-                    <option value="training delivery requirements">Training Delivery Requirements</option>
+                    <option value="a">A</option>
                     <option value="additional requirements">Additional Requirements</option>
+                    <option value="additional requirement if the micro credential course has no existing training regulations or no competency standards for emerging and new industry">Additional Requirement if the Micro Credential Course has No Existing Training Regulations or No Competency Standards for Emerging and New industry</option>
                     <option value="hidden requirements">Hidden Requirements</option>
                 </select>
                 <p v-if="!form.category" class="text-[12px] text-red-500 mt-1">This field is required</p> 
@@ -114,10 +114,9 @@
                     !editForm.category ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
                 ]">
                     <option disabled value="">Select category</option>
-                    <option value="corporate and administrative documents">Corporate and Administrative Documents</option>
-                    <option value="curricular requirements">Curricular Requirements</option>
-                    <option value="program fees">Program Fees</option>
+                    <option value="a">A</option>
                     <option value="additional requirements">Additional Requirements</option>
+                    <option value="additional requirement if the micro credential course has no existing training regulations or no competency standards for emerging and new industry">Additional Requirement if the Micro Credential Course has No Existing Training Regulations or No Competency Standards for Emerging and New industry</option>
                     <option value="hidden requirements">Hidden Requirements</option>
                 </select>
                 <p v-if="!editForm.category" class="text-[12px] text-red-500 mt-1">This field is required</p> 

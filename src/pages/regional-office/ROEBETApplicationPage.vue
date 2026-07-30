@@ -438,6 +438,7 @@ import { create } from 'axios';
     const categoryOrder = [
       'corporate and administrative documents',
       'curricular requirements',
+      'training delivery requirements',
       'program fees', 
       'additional requirements',
       'hidden requirements',

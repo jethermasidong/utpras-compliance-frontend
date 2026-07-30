@@ -255,7 +255,7 @@
   import { viewApplicationByID, editROApplicationByProgID } from '../../api/applicationApi.js';
   import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCompliance } from '../../api/documentApi.js';
   import { createDocumentReview, updateDocumentReview } from '../../api/documentReviewApi.js';
-  import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
+  import { viewMCCProfileByApplicationID } from '../../api/mccProfile.js';
   import { arrowBackOutline } from 'ionicons/icons';
   import RegionalSidebar from '../../components/RegionalSidebar.vue';
 import { create } from 'axios';
@@ -273,25 +273,18 @@ import { create } from 'axios';
   const progId = route.query.programId;
 
   const profile = ref({
-    applicant_name: '',
-    address: '',
-    program_applied: '',
-    training_capacity: '',
-    telephone: '',
-    duration: '',
-    no_of_trainees: '',
-    no_of_batches: ''
+    applicant_name: '', address: '', telephone: '',
+    program_applied: '', duration: '', no_of_trainees: '', no_of_batches: ''
   });
 
   const fieldLabels = {
     applicant_name: 'Name of the Applicant Institution',
     address: 'Address',
-    program_applied: 'Program Applied',
-    training_capacity: 'Training Capacity',
     telephone: 'Tel/Fax No',
-    duration: 'Duration (In Hrs)',
-    no_of_trainees: 'No of Trainees per batch',
-    no_of_batches: 'No of Batches per year',
+    program_applied: 'Program Applied',
+    duration: 'Duration (in Hrs.)',
+    no_of_trainees: 'No of trainees per batch',
+    no_of_batches: 'No of batches per year'
   };
 
   const documents = ref([]);
@@ -318,7 +311,7 @@ import { create } from 'axios';
 
   onMounted(async () => {
     if (appId) {
-      const data = await viewIBTProfileByApplicationID(appId);
+      const data = await viewMCCProfileByApplicationID(appId);
       const loadedData = Array.isArray(data) ? data[0] : data;
       if (loadedData) {
         profile.value = { ...loadedData };
@@ -435,10 +428,9 @@ import { create } from 'axios';
 
   const groupedRequirements = computed(() => {
     const categoryOrder = [
-      'corporate and administrative documents',
-      'curricular requirements',
-      'program fees', 
+      'a',
       'additional requirements',
+      'additional requirement if the micro credential course has no existing training regulations or no competency standards for emerging and new industry',
       'hidden requirements',
     ];
 

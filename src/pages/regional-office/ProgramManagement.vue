@@ -32,7 +32,6 @@
         
         <div class="mt-auto flex justify-between items-center pt-4 border-t border-gray-100">
            <span class="px-2 py-1 bg-green-50 text-green-700 text-[10px] uppercase font-bold rounded">Active</span>
-           <span class="text-[10px] text-gray-400 font-bold uppercase">Requirements: {{ program.reqCount || 0 }}</span>
         </div>
       </div>
     </div>

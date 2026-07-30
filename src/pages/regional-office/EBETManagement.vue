@@ -115,8 +115,7 @@
                 ]">
                     <option disabled value="">Select category</option>
                     <option value="corporate and administrative documents">Corporate and Administrative Documents</option>
-                    <option value="curricular requirements">Curricular Requirements</option>
-                    <option value="program fees">Program Fees</option>
+                    <option value="training delivery requirements">Training Delivery Requirements</option>
                     <option value="additional requirements">Additional Requirements</option>
                     <option value="hidden requirements">Hidden Requirements</option>
                 </select>

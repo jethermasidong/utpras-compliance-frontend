@@ -166,9 +166,9 @@ const programConfigs = {
     },
     mcc: {
         col1Header: 'Institution Name', 
-        col1Key: 'applicant_name',
+        col1Key: 'mcc_applicant_name',
         col2Header: 'Program Applied',
-        col2Key: 'program_applied',
+        col2Key: 'mcc_program_applied',
         route: '/mcc-compliance-page'
     },
     default: { 

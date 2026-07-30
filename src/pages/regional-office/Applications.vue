@@ -79,15 +79,15 @@
                 </td>
                 
                 <td class="px-4 py-4 text-sm text-gray-600">
-                    {{ app.date_issued }}                    
+                    {{ app.date_issued || 'N/A' }}                    
                 </td>
 
                 <td class="px-4 py-4 text-sm text-gray-600">
-                    {{ app.ctpr_number }}
+                    {{ app.ctpr_number || 'N/A' }}
                 </td>
 
                 <td class="px-4 py-4 text-sm text-gray-600">
-                    {{ app.ctpr_link }}
+                    {{ app.ctpr_link || 'N/A' }}
                 </td>
 
                 <td class="px-3 py-4 text-left">
@@ -152,10 +152,10 @@ const programConfigs = {
     },
     mcc: {
         col1Header: 'Institution Name', 
-        col1Key: 'applicant_name',
+        col1Key: 'mcc_applicant_name',
         col2Header: 'Program Applied',
-        col2Key: 'program_applied',
-        route: '/ro-mcc-compliance-page'
+        col2Key: 'mcc_program_applied',
+        route: '/ro-mcc-application-page'
     },
     default: { 
         col1Header: 'Applicant Name',
