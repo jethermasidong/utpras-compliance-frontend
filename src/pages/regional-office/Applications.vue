@@ -145,9 +145,9 @@ const programConfigs = {
     },
     mtp: {
         col1Header: 'Institution Name', 
-        col1Key: 'applicant_name',
+        col1Key: 'mtp_applicant_name',
         col2Header: 'Program Applied',
-        col2Key: 'program_applied',
+        col2Key: 'mtp_program_applied',
         route: '/ro-mtp-application-page'
     },
     mcc: {

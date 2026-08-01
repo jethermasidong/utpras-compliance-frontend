@@ -70,8 +70,7 @@
                     !form.category ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
                 ]">
                     <option disabled value="">Select category</option>
-                    <option value="corporate and administrative documents">Corporate and Administrative Documents</option>
-                    <option value="training delivery requirements">Training Delivery Requirements</option>
+                    <option value="a">A</option>
                     <option value="additional requirements">Additional Requirements</option>
                     <option value="hidden requirements">Hidden Requirements</option>
                 </select>
@@ -114,9 +113,7 @@
                     !editForm.category ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
                 ]">
                     <option disabled value="">Select category</option>
-                    <option value="corporate and administrative documents">Corporate and Administrative Documents</option>
-                    <option value="curricular requirements">Curricular Requirements</option>
-                    <option value="program fees">Program Fees</option>
+                    <option value="a">A</option>
                     <option value="additional requirements">Additional Requirements</option>
                     <option value="hidden requirements">Hidden Requirements</option>
                 </select>

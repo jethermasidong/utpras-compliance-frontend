@@ -24,6 +24,9 @@ import ROEBETApplicationPage from './pages/regional-office/ROEBETApplicationPage
 import MCCProfile from './pages/provincial-office/MCCProfile.vue'
 import MCCCompliancePage from './pages/provincial-office/MCCCompliancePage.vue'
 import ROMCCApplicationPage from './pages/regional-office/ROMCCApplicationPage.vue'
+import MTPProfile from './pages/provincial-office/MTPProfile.vue'
+import MTPCompliancePage from './pages/provincial-office/MTPCompliancePage.vue'
+import ROMTPApplicationPage from './pages/regional-office/ROMTPApplicationPage.vue'
 
 
 const routes = [
@@ -48,7 +51,10 @@ const routes = [
   { path: '/ro-ebet-application-page', component: ROEBETApplicationPage, meta: { requiresAuth: true }},
   { path: '/mcc-profile', component: MCCProfile, meta: { requiresAuth: true }},
   { path: '/mcc-compliance-page', component: MCCCompliancePage, meta: { requiresAuth: true }},
-  { path: '/ro-mcc-application-page', component: ROMCCApplicationPage, meta: { requiresAuth: true }}
+  { path: '/ro-mcc-application-page', component: ROMCCApplicationPage, meta: { requiresAuth: true }},
+  { path: '/mtp-profile', component: MTPProfile, meta: { requiresAuth: true }},
+  { path: '/mtp-compliance-page', component: MTPCompliancePage, meta: { requiresAuth: true }},
+  { path: '/ro-mtp-application-page', component: ROMTPApplicationPage, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({

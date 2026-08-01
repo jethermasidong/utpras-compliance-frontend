@@ -139,7 +139,6 @@ import { useRouter } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
 import { viewPrograms } from '../../api/programApi.js';
 import { editApplications, viewApplicationsByUser } from '../../api/applicationApi.js';
-import { viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 
 const router = useRouter();
@@ -159,9 +158,9 @@ const programConfigs = {
     },
     mtp: {
         col1Header: 'Institution Name', 
-        col1Key: 'applicant_name',
+        col1Key: 'mtp_applicant_name',
         col2Header: 'Program Applied',
-        col2Key: 'program_applied',
+        col2Key: 'mtp_program_applied',
         route: '/mtp-compliance-page'
     },
     mcc: {

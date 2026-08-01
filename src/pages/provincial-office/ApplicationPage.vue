@@ -46,7 +46,6 @@ import { viewPrograms } from '../../api/programApi.js';
 import { add } from 'ionicons/icons';
 import { useRouter } from 'vue-router';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
-import { createIBTProfile } from '../../api/ibtProfileApi.js';
 import { createApplication } from '../../api/applicationApi.js';
 
 const router = useRouter();
@@ -94,7 +93,8 @@ const navigateToRequirements = async (program) => {
     const routeMap = {
     'IBT': '/ibt-profile',
     'EBET': '/ebet-profile',
-    'MCC': '/mcc-profile'
+    'MCC': '/mcc-profile',
+    'MTP': '/mtp-profile'
     }
 
     const path = routeMap[program.program_name] || 'default-management';
