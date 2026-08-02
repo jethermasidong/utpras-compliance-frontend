@@ -44,7 +44,7 @@
           <div v-for="(label, key) in fieldLabels" :key="key">
             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">{{ label }}</label>
             <textarea
-              v-model="profile[key]" 
+              v-model="profile[key]"
               type="text"
               rows="2"
               class="w-full bg-gray-50 border border-gray-200 text-sm font-semibold wrap-break-word text-gray-800 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"

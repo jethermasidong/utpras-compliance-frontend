@@ -571,7 +571,7 @@ const generatePrintReport = () => {
         <div class="sheet-header-container">
             <img src="https://tesdaonlineprogram.com/wp-content/uploads/2023/08/TESDA-LOGO-1-1024x1024.jpg" alt="TESDA Logo" class="tesda-logo">
             <div>
-                <h1 class="sheet-title">IBT Application Data - ${profile.value.program_title}</h1>
+                <h1 class="sheet-title">IBT Application Data - ${profile.value.program_applied}</h1>
                 <div class="sheet-subtitle">Auto-generated Print Preview &bull; ${today}</div>
             </div>
         </div>

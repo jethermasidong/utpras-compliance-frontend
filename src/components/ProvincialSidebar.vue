@@ -39,6 +39,6 @@ const menuItems = [
 
 const handleLogout = () => {
   localStorage.clear();
-  router.push('/');
+  router.push('/'); 
 };
 </script>

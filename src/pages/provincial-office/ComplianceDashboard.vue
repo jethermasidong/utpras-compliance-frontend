@@ -76,7 +76,7 @@
 
                 <td class="px-4 py-4 text-sm">
                     <input 
-                        type="number" 
+                        type="text" 
                         v-model="app.ctpr_number" 
                         placeholder="Enter CTPR #"
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
