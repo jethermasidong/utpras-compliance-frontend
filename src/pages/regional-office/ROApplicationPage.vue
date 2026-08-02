@@ -5,9 +5,6 @@
       <div class="mb-6">
         <div class="flex flex-row justify-between">
           <h1 class="text-2xl font-bold text-gray-900 flex flex-row gap-3">Application - {{ profile.program_applied }}
-            <div class="mt-1 h-9 rounded-lg px-2 py-1 border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 cursor-pointer">
-              <ion-icon name="print-outline"></ion-icon>
-            </div>
           </h1>
           <router-link to="/applications">
           <button class="font-bold h-9 flex flex-row text-xs items-center justify-center border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1 rounded-xl cursor-pointer transition-colors ">
