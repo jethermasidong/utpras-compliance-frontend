@@ -38,6 +38,7 @@
           </div>
 
           <div class="mb-8">
+            <ion-icon name="people-circle-outline" class="text-6xl text-blue-900"></ion-icon>
             <h2 class="text-2xl font-bold text-gray-900">Sign in</h2>
             <p class="text-sm text-gray-500 mt-1">Enter your credentials to access your dashboard.</p>
           </div>

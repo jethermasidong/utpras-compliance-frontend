@@ -1,8 +1,15 @@
 <template>
   <aside class="w-63 h-201 bg-blue-900 mx-1 text-white mt-19 flex flex-col fixed left-0 top-0 border border-black rounded-md">
-    <div class="px-6 py-7 text-center border-b border-white/10">
-      <h1 class="text-lg font-semibold tracking-wide">UTPRAS</h1>
-      <p class="text-xs text-blue-300/70 mt-1">Provincial Dashboard</p>
+    <div class="flex flex-row px-6 py-7 text-center border-b border-white/10">
+      <img 
+        src="https://th.bing.com/th/id/R.f3e921a0737a56195a760fef1f5b319c?rik=Nmh5Z0Vuftu7zw&riu=http%3a%2f%2fcar.tesda.gov.ph%2ftesdacar%2fwp-content%2fuploads%2f2025%2f03%2fcropped-TESDA-CAR-Logo-white-Border.png&ehk=rC0BNUCp7Y%2bQQaYqg4IdGImQy0uOLE5cvklnDdA3N2Q%3d&risl=&pid=ImgRaw&r=0" 
+        alt="UTPRAS Logo" 
+        class="w-15 h-15 mr-3 mb-3 object-contain rounded-full bg-white px-1 py-1"
+      />
+      <div class="flex flex-col text-left mt-1">
+        <h1 class="text-lg font-semibold tracking-wide">UTPRAS</h1>
+        <p class="text-xs text-blue-300/70">Provincial Dashboard</p>
+      </div>
     </div>
 
     <nav class="flex-1 mt-6 px-3 space-y-1">

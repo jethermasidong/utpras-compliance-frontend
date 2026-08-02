@@ -19,7 +19,7 @@
             <ion-icon name="documents-outline"></ion-icon>
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Province Records</p>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Records</p>
             <h3 class="text-2xl font-black text-gray-900 mt-1">{{ applications.length }}</h3>
           </div>
         </div>

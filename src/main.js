@@ -30,8 +30,8 @@ import ROMTPApplicationPage from './pages/regional-office/ROMTPApplicationPage.v
 
 
 const routes = [
-  { path: '/', component: HomePage},
-  { path: '/about', component: AboutPage},
+  { path: '/', component: HomePage, meta: { hideNav: true }},
+  { path: '/about', component: AboutPage, meta: { hideNav: true }},
   { path: '/regional-dashboard', component: RegionalDashboard, meta: { requiresAuth: true }},
   { path: '/provincial-dashboard', component: ProvincialDashboard, meta: { requiresAuth: true }},
   { path: '/user-management', component: UserManagement, meta: { requiresAuth: true }},
