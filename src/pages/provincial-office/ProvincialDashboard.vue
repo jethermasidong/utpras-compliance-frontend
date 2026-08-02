@@ -2,39 +2,54 @@
   <div class="p-6 md:p-10 max-w-8xl mx-auto">
     <ProvincialSidebar class="hidden md:block" /> 
     
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Provincial Office Compliance Dashboard</h1>
-      <p class="text-gray-500 font-extralight">View and manage local training program applications</p>
+    <div class="mb-8 flex flex-row border-b border-gray-400">
+      <div class="text-2xl mr-4 border-2 rounded-full px-3 pt-3 h-13 object-cover ring-3 ring-blue-500 ring-offset-2">
+        <ion-icon name="business-outline"></ion-icon>
+      </div>
+      <div class="flex flex-col mb-5">
+        <h1 class="text-3xl font-extrabold text-gray-900">PO Dashboard</h1>
+        <p class="text-gray-500 font-light">View and manage applicants program applications</p>
+      </div>
     </div>
 
-    <!-- Summary Metrics Section -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Province Records</p>
-          <h3 class="text-2xl font-black text-gray-900 mt-1">{{ applications.length }}</h3>
+        <div class="flex flex-row">
+          <div class="text-2xl mr-5 border border-gray-200 bg-gray-100 rounded-md px-3 pt-3 object-cover ring-2 ring-blue-500 ring-offset-2">
+            <ion-icon name="documents-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Province Records</p>
+            <h3 class="text-2xl font-black text-gray-900 mt-1">{{ applications.length }}</h3>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-blue-50 text-blue-900 rounded-xl flex items-center justify-center font-bold">📂</div>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending RO Review</p>
-          <h3 class="text-2xl font-black text-orange-600 mt-1">{{ pendingCount }}</h3>
+         <div class="flex flex-row">
+          <div class="text-2xl mr-5 border border-gray-200 bg-gray-100 rounded-md px-3 pt-3 object-cover ring-2 ring-orange-400 ring-offset-2">
+            <ion-icon name="hourglass-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending RO Review</p>
+            <h3 class="text-2xl font-black text-orange-600 mt-1">{{ pendingCount }}</h3>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center font-bold">⏳</div>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Approved / CTPR Issued</p>
-          <h3 class="text-2xl font-black text-green-700 mt-1">{{ approvedCount }}</h3>
+        <div class="flex flex-row">
+          <div class="text-2xl mr-5 border border-gray-200 bg-gray-100 rounded-md px-3 pt-3 object-cover ring-2 ring-green-500 ring-offset-2">
+            <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Approved / CTPR Issued</p>
+            <h3 class="text-2xl font-black text-green-700 mt-1">{{ approvedCount }}</h3>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-green-50 text-green-700 rounded-xl flex items-center justify-center font-bold">🏆</div>
       </div>
     </div>
 
-    <!-- Program Tabs & Create Button Bar -->
     <div class="flex justify-between items-center mb-8">
-      <div class="flex gap-4 overflow-x-auto pb-2">
+      <div class="flex flex-row gap-4 overflow-x-auto pb-2">
         <button 
           v-for="program in programs" :key="program.id"
           @click="selectProgram(program)"
@@ -46,6 +61,12 @@
           ]"
         >
           {{ program.program_name }}
+          <span :class="[
+            'px-2 py-0.5 rounded-full text-[10px]',
+            activeProgram?.id === program.id ? 'bg-white/20 text-white' : 'bg-blue-100 text-gray-500'
+          ]">
+            {{ getProgramAppCount(program.id) }}
+          </span>
         </button>
       </div>
       
@@ -56,7 +77,6 @@
       </router-link>
     </div>
 
-    <!-- Main Data Table Section -->
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6 border-b border-gray-50 flex justify-between items-center">
             <h2 class="text-sm font-bold text-black uppercase tracking-widest">
@@ -188,9 +208,9 @@ const programConfigs = {
     },
     mtp: {
         col1Header: 'Institution Name', 
-        col1Key: 'applicant_name',
+        col1Key: 'mtp_applicant_name',
         col2Header: 'Program Applied',
-        col2Key: 'program_applied',
+        col2Key: 'mtp_program_applied',
         route: '/mtp-compliance-page'
     },
     mcc: {
@@ -275,6 +295,10 @@ const pendingCount = computed(() => {
 const approvedCount = computed(() => {
     return applications.value.filter(app => app.status === 'complete and successful').length;
 });
+
+const getProgramAppCount = (programId) => {
+  return applications.value.filter(app => app.program_id === programId).length;
+};
 
 const goToCompliance = (id, program_id) => {
   router.push({ 

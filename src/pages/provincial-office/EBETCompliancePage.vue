@@ -5,7 +5,8 @@
     <div class="mb-6">
       <div class="flex flex-row justify-between">
         <h1 class="text-2xl font-bold text-gray-900 flex flex-row gap-3">Application - {{ profile.program_title }}
-          <div class="mt-1 h-9 rounded-lg px-2 py-1 border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 cursor-pointer">
+          <div @click="generatePrintReport" 
+            class="mt-1 h-9 rounded-lg px-2 py-1 border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 cursor-pointer">
             <ion-icon name="print-outline"></ion-icon>
           </div>
         </h1>
@@ -110,6 +111,11 @@
                         <ion-icon name="eye-outline"></ion-icon>
                       </div>
                     </button>
+                    <span 
+                      v-if="req.file_url && req.file_url.trim() !== ''"
+                      class="inline-block w-4 h-4 bg-blue-300 rounded-full text-xs">
+                      <div class="ml-1 font-bold">{{ req.version }}</div>
+                    </span>
 
                     <button 
                       @click="triggerFileInput(req.requirement_id)"
@@ -487,4 +493,211 @@ const groupedRequirements = computed(() => {
 
   return sortedGroups;
 });
+
+const generatePrintReport = () => {
+    const today = new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+    
+    let requirementRows = '';
+    let rowIndex = 11; 
+
+    for (const [categoryName, items] of Object.entries(groupedRequirements.value)) {
+        requirementRows += `
+            <tr>
+                <td class="row-header">${rowIndex++}</td>
+                <td colspan="5" class="section-header">${categoryName} (${items.length})</td>
+            </tr>
+        `;
+        
+        items.forEach(req => {
+            const statusClass = req.status === 'compliant' ? 'status-compliant' : (req.status ? 'status-pending' : 'status-empty');
+            const statusPOClass = req.po_compliance === 'compliant' ? 'status-compliant' : (req.po_compliance ? 'status-pending' : 'status-empty');
+
+            requirementRows += `
+            <tr>
+                <td class="row-header">${rowIndex++}</td>
+                <td class="cell-value">
+                    <strong>${req.title}</strong>
+                    ${req.description ? `<br><span class="meta-text">${req.description}</span>` : ''}
+                </td>
+                <td class="cell-value">${formatDate(req.uploaded_at) || ''}</td>
+                <td style="text-align: center;">
+                    <span class="${statusPOClass}">${req.po_compliance || 'Pending'}</span>
+                </td>
+                <td style="text-align: center;">
+                    <span class="${statusClass}">${req.status || 'Pending'}</span>
+                </td>
+                <td class="cell-value">${req.remarks || ''}</td>
+            </tr>
+            `;
+        });
+    }
+
+    const appData = application.value && application.value.length > 0 ? application.value[0] : {};
+    const finalStatus = appData.status || 'Pending Review';
+    let finalStatusClass = 'status-empty';
+    if (finalStatus.includes('successful') && !finalStatus.includes('unsuccessful')) finalStatusClass = 'status-compliant';
+    else if (finalStatus.includes('findings') || finalStatus.includes('unsuccessful')) finalStatusClass = 'status-pending';
+
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Application Print - ${profile.value.enterprise_name || 'Enterprise'}</title>
+      <style>
+        body { font-family: 'Arial', sans-serif; font-size: 10pt; color: #000000; margin: 0; padding: 20px; background: #ffffff; }
+        @page { size: A4 portrait; margin: 15mm; }
+        
+        /* Flexbox added for Logo and Title alignment */
+        .sheet-header-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 2px solid #e8eaed; padding-bottom: 15px; }
+        .tesda-logo { height: 55px; width: auto; object-fit: contain; }
+        .sheet-title { font-size: 14pt; font-weight: bold; margin: 0; color: #202124; text-transform: uppercase; }
+        .sheet-subtitle { font-size: 9pt; color: #5f6368; margin-top: 4px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; page-break-inside: auto; }
+        tr { page-break-inside: avoid; page-break-after: auto; }
+        th, td { border: 1px solid #c0c0c0; padding: 6px 8px; text-align: left; vertical-align: middle; line-height: 1.4; }
+        .col-header, .row-header { background-color: #f8f9fa; color: #5f6368; text-align: center; font-weight: normal; font-size: 9pt; user-select: none; }
+        .row-header { width: 30px; }
+        .section-header { background-color: #e8eaed; font-weight: bold; text-transform: uppercase; font-size: 9pt; color: #202124; }
+        .label-cell { font-weight: bold; background-color: #fbfbfb; color: #3c4043; width: 20%; }
+        .cell-value { font-family: 'Arial', sans-serif; }
+        
+        .status-compliant { color: #137333; background-color: #e6f4ea; padding: 3px 6px; border-radius: 4px; font-size: 8pt; font-weight: bold; text-transform: uppercase; display: inline-block; }
+        .status-pending { color: #b06000; background-color: #fef7e0; padding: 3px 6px; border-radius: 4px; font-size: 8pt; font-weight: bold; text-transform: uppercase; display: inline-block; }
+        .status-empty { color: #5f6368; background-color: #f1f3f4; padding: 3px 6px; border-radius: 4px; font-size: 8pt; font-weight: bold; text-transform: uppercase; display: inline-block; }
+        .meta-text { color: #5f6368; font-size: 8pt; text-transform: uppercase; }
+        
+        @media print { body { padding: 0; } }
+      </style>
+    </head>
+    <body>
+        <div class="sheet-header-container">
+            <img src="https://tesdaonlineprogram.com/wp-content/uploads/2023/08/TESDA-LOGO-1-1024x1024.jpg" alt="TESDA Logo" class="tesda-logo">
+            <div>
+                <h1 class="sheet-title">EBET Application Data - ${profile.value.program_title}</h1>
+                <div class="sheet-subtitle">Auto-generated Print Preview &bull; ${today}</div>
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th class="col-header"></th>
+                <th class="col-header" style="width: 25%">A</th>
+                <th class="col-header" style="width: 25%">B</th>
+                <th class="col-header" style="width: 25%">C</th>
+                <th class="col-header" style="width: 25%">D</th>
+            </tr>
+            <tr>
+                <td class="row-header">1</td>
+                <td colspan="4" class="section-header">Institution Profile</td>
+            </tr>
+            <tr>
+                <td class="row-header">2</td>
+                <td class="label-cell">EBET Programs</td>
+                <td class="cell-value">${profile.value.program_type || 'N/A'}</td>
+                <td class="label-cell">Program Title</td>
+                <td class="cell-value">${profile.value.program_title || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="row-header">3</td>
+                <td class="label-cell">Nominal Duration</td>
+                <td class="cell-value">${profile.value.nominal_duration || 'N/A'}</td>
+                <td class="label-cell">Name of Enterprise</td>
+                <td class="cell-value">${profile.value.enterprise_name || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="row-header">4</td>
+                <td class="label-cell">Total Employees</td>
+                <td class="cell-value">${profile.value.total_employees || 'N/A'}</td>
+                <td class="label-cell">Training Site Address</td>
+                <td class="cell-value">${profile.value.training_site || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="row-header">5</td>
+                <td class="label-cell">Street Address</td>
+                <td class="cell-value">${profile.value.street_address || 'N/A'}</td>
+                <td class="label-cell">Barangay</td>
+                <td class="cell-value">${profile.value.barangay || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="row-header">6</td>
+                <td class="label-cell">City</td>
+                <td class="cell-value">${profile.value.city || 'N/A'}</td>
+                <td class="label-cell">Province</td>
+                <td class="cell-value">${profile.value.province || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="row-header">7</td>
+                <td class="label-cell">Area Zip Code</td>
+                <td class="cell-value">${profile.value.zipcode || 'N/A'}</td>
+                <td class="label-cell">Website</td>
+                <td class="cell-value">${profile.value.website || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="row-header">8</td>
+                <td class="label-cell">Telephone</td>
+                <td class="cell-value">${profile.value.telephone || 'N/A'}</td>
+                <td class="label-cell">Mobile No.</td>
+                <td class="cell-value">${profile.value.mobile_no || 'N/A'}</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <th class="col-header"></th>
+                <th class="col-header" style="width: 30%">A</th>
+                <th class="col-header" style="width: 15%">B</th>
+                <th class="col-header" style="width: 12.5%">C</th>
+                <th class="col-header" style="width: 12.5%">D</th>
+                <th class="col-header" style="width: 30%">E</th>
+            </tr>
+            <tr>
+                <td class="row-header">9</td>
+                <td colspan="5" class="section-header">Required Documents</td>
+            </tr>
+            <tr>
+                <td class="row-header">10</td>
+                <td class="label-cell" style="text-align: center;">Requirement Title</td>
+                <td class="label-cell" style="text-align: center;">Date Uploaded</td>
+                <td class="label-cell" style="text-align: center;">PO Compliance</td>
+                <td class="label-cell" style="text-align: center;">RO Compliance</td>
+                <td class="label-cell" style="text-align: center;">Remarks</td>
+            </tr>
+            ${requirementRows}
+        </table>
+
+        <table>
+            <tr>
+                <th class="col-header"></th>
+                <th class="col-header" style="width: 30%">A</th>
+                <th class="col-header" style="width: 70%">B</th>
+            </tr>
+            <tr>
+                <td class="row-header">${rowIndex++}</td>
+                <td colspan="2" class="section-header">Final Application Evaluation</td>
+            </tr>
+            <tr>
+                <td class="row-header">${rowIndex++}</td>
+                <td class="label-cell">RO Final Status</td>
+                <td class="cell-value">
+                    <span class="${finalStatusClass}">${finalStatus}</span>
+                </td>
+            </tr>
+        </table>
+
+    </body>
+    </html>
+    `;
+
+    const printWindow = window.open('', '_blank', 'width=800,height=900');
+    if (printWindow) {
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.focus();
+        
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+    }
+};
 </script>

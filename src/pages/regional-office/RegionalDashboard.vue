@@ -3,9 +3,14 @@
 
     <RegionalSidebar class="hidden md:block" /> 
     
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Regional Office Compliance Dashboard</h1>
-      <p class="text-gray-500 font-extralight">Monitor, review, and evaluate provincial training applications</p>
+    <div class="mb-8 flex flex-row border-b border-gray-400">
+      <div class="text-3xl mr-4 border-2 rounded-full px-2 pt-2 h-13 object-cover ring-3 ring-blue-500 ring-offset-2">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </div>
+      <div class="flex flex-col mb-5">
+        <h1 class="text-3xl font-extrabold text-gray-900">RO Dashboard</h1>
+        <p class="text-gray-500 font-light">View and manage applicants program applications</p>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
@@ -14,7 +19,7 @@
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Applications</p>
           <h3 class="text-2xl font-black text-gray-900 mt-1">{{ allApplications.length }}</h3>
         </div>
-        <div class="text-2xl px-3 pt-2 pb-1 border border-gray-200 rounded-md">
+        <div class="text-2xl px-3 pt-2 pb-1 border border-gray-200 rounded-md object-cover ring-2 ring-blue-500 ring-offset-2">
           <ion-icon name="documents-outline"></ion-icon>
         </div>
       </div>
@@ -23,7 +28,7 @@
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Reviews</p>
           <h3 class="text-2xl font-black text-orange-600 mt-1">{{ pendingCount }}</h3>
         </div>
-        <div class="text-2xl px-3 pt-2 pb-1 border border-gray-200 rounded-md">
+        <div class="text-2xl px-3 pt-2 pb-1 border border-gray-200 rounded-md object-cover ring-2 ring-orange-500 ring-offset-2">
           <ion-icon name="hourglass-outline"></ion-icon>
         </div>
       </div>
@@ -32,7 +37,7 @@
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Completed / Approved</p>
           <h3 class="text-2xl font-black text-green-700 mt-1">{{ approvedCount }}</h3>
         </div>
-        <div class="text-2xl px-3 pt-2 pb-1 border border-gray-200 rounded-md">
+        <div class="text-2xl px-3 pt-2 pb-1 border border-gray-200 rounded-md object-cover ring-2 ring-green-500 ring-offset-2">
           <ion-icon name="checkmark-done-circle-outline"></ion-icon>
         </div>
       </div>

@@ -14,7 +14,7 @@
         
         <div class="flex justify-between items-start mb-4">
           <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center font-bold text-blue-900 text-lg">
-            {{ program.id }}
+            <ion-icon :name="getProgramIcon(program.id)"></ion-icon>
           </div> 
         </div>
 
@@ -23,6 +23,7 @@
         
         <div class="mt-auto flex justify-between items-center pt-4 border-t border-gray-100">
            <span class="px-2 py-1 bg-green-50 text-green-700 text-[10px] uppercase font-bold rounded">Active</span>
+           <span class="px-2 py-1 bg-blue-50 text-blue-700 text-[10px] uppercase font-bold rounded">Apply</span>
         </div>
       </div>
     </div>
@@ -73,6 +74,8 @@ onMounted(async () => {
 
 
 
+
+
 const navigateToRequirements = async (program) => {
   try {
 
@@ -109,6 +112,18 @@ const navigateToRequirements = async (program) => {
   } catch (error) {
 
   }
+};
+
+const getProgramIcon = (programId) => {
+  const icons = {
+    1: 'business-outline', 
+    2: 'briefcase-outline',   
+    3: 'newspaper-outline',     
+    4: 'bus-outline',
+  };
+  
+  // Returns the mapped icon, or a default 'folder-outline' if the ID isn't found
+  return icons[programId] || 'folder-outline';
 };
 
 
