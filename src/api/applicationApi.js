@@ -19,9 +19,9 @@ export const editApplications = async (id, data) => {
     }
 };
 
-export const editROApplicationByProgID = async (program_id, data) => {
+export const editROApplicationByProgID = async (id, program_id, data) => {
     try {
-        const response = await api.put(`/ro-applications/update/${program_id}`, data);
+        const response = await api.put(`/ro-applications/update/${program_id}/${id}`, data);
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;

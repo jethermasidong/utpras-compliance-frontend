@@ -55,6 +55,8 @@
                   <th class="px-3 py-4">RO Compliance</th>
                   <th class="px-3 py-4">Remarks</th>
                   <th class="px-3 py-4">Date Reviewed</th>
+                  <th class="px-3 py-4">Updated Documents</th>
+                  <th class="px-3 py-4">Date Uploaded</th>
                   <th class="px-3 py-4">Action</th>
                 </tr>
               </thead>
@@ -63,7 +65,7 @@
                 <template v-for="(items, categoryName) in groupedRequirements" :key="categoryName">
           
                 <tr class="bg-blue-50/60">
-                  <td colspan="9" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-900">
+                  <td colspan="10" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-900">
                     {{ categoryName }} ({{ items.length }})
                   </td>
                 </tr>
@@ -129,6 +131,25 @@
                     ></textarea>
                   </td>
                   <td class="px-3 py-4 text-center"><span class="text-[10px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ formatDate(req.reviewed_at) || '...'}}</span></td>
+                  <td class="px-3 py-4">
+                    <div class="flex items-center gap-2 text-center">
+                      <button 
+                          :disabled="!req.updated_file_url || req.updated_file_url.trim() === ''"
+                          @click="openPreview(req)"
+                          :class="[
+                              'font-bold text-xs border-2 px-3 py-1 rounded-xl transition-colors flex items-center justify-center',
+                              (!req.updated_file_url || req.updated_file_url.trim() === '') 
+                                  ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60' 
+                                  : 'bg-white text-black border-gray-200 hover:border-blue-300 hover:bg-blue-100 cursor-pointer'
+                          ]"
+                      >
+                          <div class="mt-1">
+                              <ion-icon name="eye-outline"></ion-icon> 
+                          </div>
+                      </button>
+                  </div>
+                  </td>
+                  <td class="px-3 py-4 text-center"><span class="text-[10px] rounded-md uppercase px-2 py-1 bg-gray-50 text-black">{{ formatDate(req.updated_uploaded_at)}}</span></td>
                   <td class="px-3 py-4 text-left whitespace-nowrap space-x-1">
                     <button 
                       :disabled="!req.file_url || req.file_url.trim() === ''"
@@ -382,7 +403,7 @@ import { create } from 'axios';
         status: appObj.status
       };
       
-      await editROApplicationByProgID(progId, data);
+      await editROApplicationByProgID(appId, progId, data);
       showToast('success', 'Saved', 'RO Final Evaluation updated successfully.');
 
       await fetchApplication(appId);

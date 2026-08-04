@@ -12,7 +12,7 @@
           TESDA
         </span>
         <h1 class="text-xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-          UTPRAS Program Compliance Portal
+          CAR UTPRAS Portal
         </h1>
         <p class="text-base lg:text-lg text-gray-700 leading-relaxed font-medium">
           Streamline your tracking and manage your requirements with ease.

@@ -27,3 +27,12 @@ export const viewRequirement = async (program_id) => {
         throw err.response?.data || err.message;
     }
 };
+
+export const deleteRequirement = async (id) => {
+    try {
+        const response = await api.delete(`/requirements/delete/${id}`);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+};

@@ -74,6 +74,8 @@
                 <th class="px-3 py-4">RO Compliance</th>
                 <th class="px-3 py-4">Remarks</th>
                 <th class="px-3 py-4">Date Reviewed</th>
+                <th class="px-3 py-4">Updated Documents</th>
+                <th class="px-3 py-4">Date Uploaded</th>
                 <th class="px-3 py-4">Action</th>
               </tr>
             </thead>
@@ -82,7 +84,7 @@
               <template v-for="(items, categoryName) in groupedRequirements" :key="categoryName">
         
               <tr class="bg-blue-50/60">
-                <td colspan="9" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-900">
+                <td colspan="10" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-900">
                   {{ categoryName }} ({{ items.length }})
                 </td>
               </tr>
@@ -111,11 +113,6 @@
                         <ion-icon name="eye-outline"></ion-icon>
                       </div>
                     </button>
-                    <span 
-                      v-if="req.file_url && req.file_url.trim() !== ''"
-                      class="inline-block w-4 h-4 bg-blue-300 rounded-full text-xs">
-                      <div class="ml-1 font-bold">{{ req.version }}</div>
-                    </span>
 
                     <button 
                       @click="triggerFileInput(req.requirement_id)"
@@ -154,6 +151,34 @@
                     </div>
                 </td>
                 <td class="px-3 py-4 text-center"><span class="text-[10px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ formatDate(req.reviewed_at) || '...'}}</span></td>
+                <td class="px-3 py-4">
+                  <input 
+                    type="file" 
+                    accept=".pdf,.jpg,.png,.docx"
+                    :ref="el => updatedFileInputs[req.requirement_id] = el" 
+                    @change="(e) => handleUpdatedFileSelected(e, req.requirement_id)" 
+                    class="hidden" 
+                  />
+                  <div class="flex items-center gap-2">
+                    <button 
+                      v-if="req.updated_file_url && req.updated_file_url.trim() !== ''"
+                      @click="openPreview({ file_url: req.updated_file_url, title: 'Updated: ' + req.title })"
+                      class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1 rounded-xl cursor-pointer transition-colors"
+                    >
+                      <div class="mt-1">
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </div>
+                    </button>
+
+                    <button 
+                      @click="triggerUpdatedFileInput(req.requirement_id)"
+                      class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1 rounded-xl cursor-pointer transition-colors"
+                    >
+                      {{ req.updated_file_url ? 'Change' : 'Upload' }}
+                    </button>
+                  </div>
+                </td>
+                <td class="px-3 py-4 text-center"><span class="text-[10px] px-2 py-1 rounded-xl uppercase bg-gray-50 text-black">{{ formatDate(req.updated_uploaded_at) || '...'}}</span></td>
                 <td class="px-2 py-4 text-left whitespace-nowrap space-x-1">
                   <button 
                       :disabled="!req.file_url || req.file_url.trim() === ''"
@@ -269,6 +294,7 @@ import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCo
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editEBETProfile, viewEBETProfileByApplicationID } from '../../api/ebetProfile.js';
 import { arrowBackOutline } from 'ionicons/icons';
+import { createUpdatedDocument, editUpdatedDocumentFileUpload } from '../../api/updatedDocumentApi,js';
 
 const route = useRoute();
 const { showToast } = useToast();
@@ -276,6 +302,8 @@ const { showToast } = useToast();
 const originalProfile = ref({});
 
 const fileInputs = ref({});
+const updatedFileInputs = ref({});
+
 
 const activeRequirementId = ref(null);
 
@@ -383,7 +411,6 @@ const handleFileSelected = async (event, requirementId) => {
 
   const data = new FormData();
   data.append('file', file);
-  data.append('version', hasExistingFile ? (Number(currentReq.version || 1) + 1) : 1);
   data.append('po_compliance', 'pending');
 
   try {
@@ -406,6 +433,45 @@ const handleFileSelected = async (event, requirementId) => {
   }
 };
 
+
+const triggerUpdatedFileInput = (requirementId) => {
+  activeRequirementId.value = requirementId;
+  if (updatedFileInputs.value[requirementId]) {
+    updatedFileInputs.value[requirementId].click();
+  }
+};
+
+const handleUpdatedFileSelected = async (event, requirementId) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  activeRequirementId.value = requirementId;
+  const currentReq = documents.value.find(r => r.requirement_id === requirementId);
+  const hasExistingUpdatedFile = currentReq && currentReq.updated_file_url && currentReq.updated_file_url.trim() !== '';
+
+  const data = new FormData();
+  data.append('file', file);
+
+  try {
+    showToast('info', 'Uploading....', 'Uploading updated document...');
+    
+    if (hasExistingUpdatedFile) {
+      await editUpdatedDocumentFileUpload(appId, requirementId, data); 
+    } else {
+      await createUpdatedDocument(appId, requirementId, data);
+    }
+    
+    showToast('success', 'Uploaded', 'Updated document uploaded successfully!');
+
+    documents.value = await viewDocuments(appId, progId);
+  } catch (error) {
+    console.error("Upload failed:", error);
+    showToast('error', 'Error Uploading', 'Failed to upload updated document.');
+  } finally {
+    activeRequirementId.value = null;
+    event.target.value = '';
+  }
+};
 
 const handlePOComplianceUpdate = async (req) => {
   showToast('info', 'Saving....', 'Saving PO Compliance Status');

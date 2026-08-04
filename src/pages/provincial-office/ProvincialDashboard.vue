@@ -112,30 +112,16 @@
                     {{ app[currentConfig.col2Key] || 'N/A' }}
                 </td>
                 
-                <td class="px-4 py-4 text-sm">
-                    <input 
-                        type="date" 
-                        v-model="app.date_issued" 
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                <td class="px-3 py-4 text-sm text-gray-600">
+                    {{ app.date_issued || 'N/A' }}
                 </td>
 
-                <td class="px-4 py-4 text-sm">
-                    <input 
-                        type="text" 
-                        v-model="app.ctpr_number" 
-                        placeholder="Enter CTPR #"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                <td class="px-3 py-4 text-sm text-gray-600">
+                    {{ app.ctpr_number || 'N/A' }}
                 </td>
 
-                <td class="px-4 py-4 text-sm">
-                    <input 
-                        type="text" 
-                        v-model="app.ctpr_link" 
-                        placeholder="Enter Link"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                <td class="px-3 py-4 text-sm text-gray-600">
+                    {{ app.ctpr_link || 'N/A' }}
                 </td>
 
                 <td class="px-3 py-4 text-left">
@@ -157,12 +143,6 @@
                 </td>
                 
                 <td class="px-4 py-4 text-right whitespace-nowrap space-x-1">
-                    <button 
-                      @click="updateApplication(app)"
-                      class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-2 rounded-xl transition-colors"
-                    >
-                      Save
-                    </button>
                     <button 
                       @click="goToCompliance(app.id, app.program_id)"
                       class="font-bold border-2 hover:border-blue-300 text-xs bg-white text-black border-gray-200 px-3 py-2 rounded-xl hover:bg-blue-100 transition-colors"
@@ -189,7 +169,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from '../../../composables/useToast.js';
 import { viewPrograms } from '../../api/programApi.js';
-import { editApplications, viewApplicationsByUser } from '../../api/applicationApi.js';
+import { viewApplicationsByUser } from '../../api/applicationApi.js';
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 
 const router = useRouter();
@@ -262,22 +242,6 @@ onMounted(async () => {
     }
 });
 
-const updateApplication = async (app) => {
-    showToast('info', 'Saving....', 'Saving application info.....');
-    try {
-        const data = {
-            date_issued: app.date_issued ? app.date_issued : null,
-            ctpr_number: app.ctpr_number || '',
-            ctpr_link: app.ctpr_link || '',
-        };
-
-        await editApplications(app.id, data);
-        showToast('success', 'Saved', 'Application CTPR details updated successfully.');
-        await fetchApplications();
-    } catch (error) {
-        showToast('error', 'Error', 'Could not save current data.');
-    }
-};
 
 const selectProgram = (program) => {
   activeProgram.value = program;

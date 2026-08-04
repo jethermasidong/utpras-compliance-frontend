@@ -31,8 +31,9 @@
               <td class="px-6 py-4 capitalize text-gray-600">{{ requirement.display_order }}</td>
               <td class="px-6 py-4 capitalize text-gray-600">{{ requirement.description || 'N/A' }}</td>
               <td class="px-6 py-4 capitalize text-gray-600">{{ requirement.category || 'N/A' }}</td>
-              <td class="px-6 py-4 text-right space-x-2">
-                <button @click="openEditModal(requirement)" class="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">Edit</button>
+              <td class="px-6 py-4 text-right space-x-2 flex flex-col gap-2">
+                <button @click="openEditModal(requirement)" class="text-blue-600 hover:text-blue-800 font-medium cursor-pointer border border-gray-100 rounded-md px-2 py-1 hover:bg-blue-600/10">Edit</button>
+                <button @click="confirmDelete(requirement.id)" class="text-red-600 hover:text-red-800 font-medium cursor-pointer border border-gray-100 rounded-md px-2 py-1 hover:bg-red-600/10">Delete</button>
               </td>
             </tr>
             <tr v-if="requirements.length === 0">
@@ -244,6 +245,19 @@
     } catch (error) {
       showToast('error', 'Error', 'Failed to save changes.');
       
+    }
+  };
+
+  const confirmDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this requirement? This action cannot be undone.')) {
+      try {
+        await deleteRequirement(id);
+        
+        requirements.value = await viewRequirement(programId);
+        showToast('success', 'Deleted', 'Requirement has been successfully removed.');
+      } catch (error) {
+        showToast('error', 'Error', 'Failed to delete requirement.');
+      }
     }
   };
 
