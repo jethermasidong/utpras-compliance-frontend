@@ -4,7 +4,7 @@
       
       <div class="flex items-center">
         <img class="w-10 h-10 bg-white rounded-full p-1" src="/tesda-logo.png" alt="Company Logo" />
-        <h1 class="pl-2 text-xl font-bold flex flex-row">CAR<h1 class="font-extralight text-lg"> UTPRAS</h1></h1>
+        <h1 class="pl-2 text-xl font-semibold flex flex-row">CAR UTPRAS</h1>
       </div>
       
       <div v-if="!route.meta.requiresAuth" class="flex items-center space-x-4">

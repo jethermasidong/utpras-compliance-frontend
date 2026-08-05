@@ -2,7 +2,7 @@
   <div class="p-6 md:p-10 max-w-8xl mx-auto">
     <RegionalSidebar class="hidden md:block" /> 
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Regional Office Application Management</h1>
+      <h1 class="text-3xl font-extrabold text-gray-900">Regional Office Application Management</h1>
       <p class="text-gray-500 font-extralight">View pending applications based on programs</p>
     </div>
 
@@ -19,6 +19,12 @@
         ]"
         >
         {{ province }}
+        <span :class="[
+            'px-2 py-0.5 rounded-full text-[10px]',
+            activeProvince === province ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
+        ]">
+            {{ provinceCounts[province] || 0 }}
+        </span>
         </button>
     </div>
 
@@ -97,11 +103,30 @@
 
                 <td class="px-4 py-4 text-sm">
                     <input 
-                        type="text" 
-                        v-model="app.ctpr_link" 
-                        placeholder="Enter Link"
-                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs focus:bg-white outline-none focus:ring-1 focus:ring-blue-500"
+                        type="file" 
+                        accept=".pdf,.jpg,.png"
+                        :ref="el => ctprFileInputs[app.id] = el" 
+                        @change="(e) => handleCTPRFileSelected(e, app)" 
+                        class="hidden" 
                     />
+                    <div class="flex items-center gap-2">
+                        <a 
+                            v-if="app.ctpr_link && app.ctpr_link.trim() !== ''"
+                            :href="getFileUrl(app.ctpr_link)"
+                            target="_blank"
+                            class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1.5 rounded-xl cursor-pointer transition-colors flex items-center justify-center"
+                            title="View Document"
+                        >
+                            <ion-icon name="eye-outline" class="text-sm"></ion-icon>
+                        </a>
+
+                        <button 
+                            @click="triggerCTPRFileInput(app.id)"
+                            class="font-bold text-xs border-2 hover:border-blue-300 hover:bg-blue-100 bg-white text-black border-gray-200 px-3 py-1.5 rounded-xl cursor-pointer transition-colors"
+                        >
+                            {{ app.ctpr_link ? 'Change' : 'Upload' }}
+                        </button>
+                    </div>
                 </td>
 
                 <td class="px-3 py-4 text-left">
@@ -150,10 +175,14 @@ import RegionalSidebar from '../../components/RegionalSidebar.vue';
 
 const router = useRouter();
 const { showToast } = useToast();
+
 const programs = ref([]);
+
 const applications = ref([]);
+
 const activeProgram = ref(null);
 
+const ctprFileInputs = ref({});
 
 const programConfigs = {
     ebet: {
@@ -223,17 +252,51 @@ onMounted(async () => {
 });
 
 
+const triggerCTPRFileInput = (appId) => {
+    if (ctprFileInputs.value[appId]) {
+        ctprFileInputs.value[appId].click();
+    }
+};
+
+const handleCTPRFileSelected = async (event, app) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        showToast('info', 'Uploading....', 'Uploading CTPR Document...');
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        if (app.date_issued) formData.append('date_issued', app.date_issued);
+        if (app.ctpr_number) formData.append('ctpr_number', app.ctpr_number);
+
+        await editApplications(app.id, formData);
+        
+        showToast('success', 'Uploaded', 'Document saved automatically!');
+        await fetchApplications(); 
+        
+    } catch (error) {
+        console.error("Upload Error:", error);
+        showToast('error', 'Error', 'Failed to upload document.');
+    } finally {
+        event.target.value = ''; 
+    }
+};
+
+
 const updateApplication = async (app) => {
     showToast('info', 'Saving....', 'Saving application info.....');
     try {
-        const data = {
-            date_issued: app.date_issued ? app.date_issued : null,
-            ctpr_number: app.ctpr_number || '',
-            ctpr_link: app.ctpr_link || '',
-        };
+        const formData = new FormData();
+        
+        if (app.date_issued) formData.append('date_issued', app.date_issued);
+        if (app.ctpr_number) formData.append('ctpr_number', app.ctpr_number);
+        if (app.ctpr_link) formData.append('ctpr_link', app.ctpr_link);
 
-        await editApplications(app.id, data);
-        showToast('success', 'Saved', 'Application CTPR details updated successfully.');
+        await editApplications(app.id, formData);
+        
+        showToast('success', 'Saved', 'Application details updated successfully.');
         await fetchApplications();
     } catch (error) {
         showToast('error', 'Error', 'Could not save current data.');
@@ -247,7 +310,7 @@ const selectProgram = (program) => {
 };
 
 const activeProvince = ref('All');
-const provinces = ref(['All', 'Benguet', 'Mountain Province', 'Ifugao', 'Abra', 'Kalinga']);
+const provinces = ref(['All', 'Benguet', 'Mountain Province', 'Ifugao', 'Abra', 'Kalinga', 'Apayao']);
 
 const filteredApplications = computed(() => {
   return applications.value.filter(app => {
@@ -282,6 +345,40 @@ const formatDate = (dateString) => {
   }).format(date);
 };
 
+const getFileUrl = (url) => {
+  if (!url) return '#';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+};
 
+
+const provinceCounts = computed(() => {
+    const counts = {};
+    provinces.value.forEach(p => {
+        counts[p] = 0;
+    });
+
+    const appsForCurrentProgram = applications.value.filter(app => {
+        return activeProgram.value ? String(app.program_id) === String(activeProgram.value.id) : true;
+    });
+
+    counts['All'] = appsForCurrentProgram.length;
+
+    appsForCurrentProgram.forEach(app => {
+        const appProvinceStr = (app.province || '').trim().toLowerCase();
+        
+        const matchedProvince = provinces.value.find(
+            p => p.toLowerCase() === appProvinceStr && p !== 'All'
+        );
+
+        if (matchedProvince) {
+            counts[matchedProvince]++;
+        }
+    });
+
+    return counts;
+});
 
 </script>

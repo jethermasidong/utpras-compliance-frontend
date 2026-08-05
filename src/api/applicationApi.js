@@ -12,7 +12,11 @@ export const createApplication = async (data) => {
 
 export const editApplications = async (id, data) => {
     try {
-        const response = await api.put(`/applications-update/${id}`, data);
+        const response = await api.put(`/applications-update/${id}`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
         return response.data;
     } catch (err) {
         throw err.response?.data || err.message;
