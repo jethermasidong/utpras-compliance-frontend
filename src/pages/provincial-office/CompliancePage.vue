@@ -294,7 +294,7 @@ import { viewDocuments, createDocument, editDocumentFileUpload, editDocumentPOCo
 import ProvincialSidebar from '../../components/ProvincialSidebar.vue';
 import { editIBTProfile, viewIBTProfileByApplicationID } from '../../api/ibtProfileApi.js';
 import { arrowBackOutline } from 'ionicons/icons';
-import { createUpdatedDocument, editUpdatedDocumentFileUpload } from '../../api/updatedDocumentApi,js';
+import { createUpdatedDocument, editUpdatedDocumentFileUpload } from '../../api/updatedDocumentApi.js';
 
 const route = useRoute();
 const { showToast } = useToast();

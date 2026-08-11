@@ -27,6 +27,7 @@ import ROMCCApplicationPage from './pages/regional-office/ROMCCApplicationPage.v
 import MTPProfile from './pages/provincial-office/MTPProfile.vue'
 import MTPCompliancePage from './pages/provincial-office/MTPCompliancePage.vue'
 import ROMTPApplicationPage from './pages/regional-office/ROMTPApplicationPage.vue'
+import Settings from './pages/provincial-office/Settings.vue'
 
 
 const routes = [
@@ -54,7 +55,8 @@ const routes = [
   { path: '/ro-mcc-application-page', component: ROMCCApplicationPage, meta: { requiresAuth: true }},
   { path: '/mtp-profile', component: MTPProfile, meta: { requiresAuth: true }},
   { path: '/mtp-compliance-page', component: MTPCompliancePage, meta: { requiresAuth: true }},
-  { path: '/ro-mtp-application-page', component: ROMTPApplicationPage, meta: { requiresAuth: true }}
+  { path: '/ro-mtp-application-page', component: ROMTPApplicationPage, meta: { requiresAuth: true }},
+  { path: '/settings', component: Settings, meta: { requiresAuth: true }}
 ]
 
 const router = createRouter({

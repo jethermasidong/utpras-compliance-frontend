@@ -1,4 +1,4 @@
-import api from '../api/api.js';
+import api from './api.js';
 
 
 export const createUpdatedDocument = async (application_id, requirement_id, data) => {

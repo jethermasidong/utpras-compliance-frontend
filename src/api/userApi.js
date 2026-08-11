@@ -31,6 +31,14 @@ export const addUser = async (data) => {
     }
 };
 
+export const updatePassword = async (data) => {
+    try {
+        const response = await api.put('/user-update', data);
+        return response.data;
+    } catch (err) {
+        throw err.response?.data || err.message;
+    }
+}
 
 export const deleteUser = async (id) => {
     try {

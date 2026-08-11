@@ -2,8 +2,8 @@
   <div class="p-6 md:p-10 max-w-8xl mx-auto">
     <ProvincialSidebar class="hidden md:block" /> 
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Provincial Office Compliance Dashboard</h1>
-      <p class="text-gray-500 font-extralight">View pending applications based on programs</p>
+      <h1 class="text-3xl font-extrabold text-gray-900">Provincial Office Compliance Dashboard</h1>
+      <p class="text-gray-500 font-extralight">Create and view pending applications based on programs.</p>
     </div>
 
 
