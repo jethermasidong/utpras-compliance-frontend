@@ -573,7 +573,6 @@ const generatePrintReport = () => {
                     <strong>${req.title}</strong>
                     ${req.description ? `<br><span class="meta-text">${req.description}</span>` : ''}
                 </td>
-                <td class="cell-value">${formatDate(req.uploaded_at)}</td>
                 <td style="text-align: center;">
                     <span class="${statusPOClass}">${req.po_compliance || 'Pending'}</span>
                 </td>
@@ -663,7 +662,6 @@ const generatePrintReport = () => {
                 <th class="col-header" style="width: 15%">B</th>
                 <th class="col-header" style="width: 12.5%">C</th>
                 <th class="col-header" style="width: 12.5%">D</th>
-                <th class="col-header" style="width: 30%">E</th>
             </tr>
             <tr>
                 <td class="row-header">4</td>
@@ -672,7 +670,6 @@ const generatePrintReport = () => {
             <tr>
                 <td class="row-header">5</td>
                 <td class="label-cell" style="text-align: center;">Requirement Title</td>
-                <td class="label-cell" style="text-align: center;">Date Uploaded</td>
                 <td class="label-cell" style="text-align: center;">PO Compliance</td>
                 <td class="label-cell" style="text-align: center;">RO Compliance</td>
                 <td class="label-cell" style="text-align: center;">Remarks</td>

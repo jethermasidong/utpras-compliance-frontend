@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-63 h-201 bg-blue-900 mx-1 text-white mt-19 flex flex-col fixed left-0 top-0 border border-black rounded-md">
+  <aside class="w-63 h-210 bg-blue-900 mx-1 text-white mt-19 flex flex-col fixed left-0 top-0 border border-black rounded-md">
     <div class="flex flex-row px-6 py-7 text-center border-b border-white/10">
       <img 
         src="https://th.bing.com/th/id/R.f3e921a0737a56195a760fef1f5b319c?rik=Nmh5Z0Vuftu7zw&riu=http%3a%2f%2fcar.tesda.gov.ph%2ftesdacar%2fwp-content%2fuploads%2f2025%2f03%2fcropped-TESDA-CAR-Logo-white-Border.png&ehk=rC0BNUCp7Y%2bQQaYqg4IdGImQy0uOLE5cvklnDdA3N2Q%3d&risl=&pid=ImgRaw&r=0" 
